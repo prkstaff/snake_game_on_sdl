@@ -9,9 +9,12 @@ class Game
         const int SCREEN_WIDTH;
         const int SCREEN_HEIGHT;
         bool game_is_running;
+        SDL_Event sdl_event;
         SDL_Window* window;
         SDL_Surface* screenSurface;
+        SDL_Surface* closeButton;
         bool initSDLScreen();
+        void placeExitButton();
         void processInput();
         void updateGame();
         void drawGame();
