@@ -2,6 +2,8 @@
 #define GAME_H
 
 #include <SDL2/SDL.h>
+#include <stdio.h>
+#include <string>
 
 class Game
 {
@@ -13,6 +15,14 @@ class Game
         SDL_Window* window;
         SDL_Surface* screenSurface;
         SDL_Surface* closeButton;
+        enum SnakeSprites{
+            SNAKE_HEAD,
+            SNAKE_BODY,
+            SNAKE_BODY_TURN,
+            SNAKE_TAIL,
+            APPLE
+        };
+        //SDL_Surface* loadSurface( std::string path);
         bool initSDLScreen();
         void placeExitButton();
         void processInput();

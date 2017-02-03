@@ -1,5 +1,7 @@
 #include "Game.h"
 
+//optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
+//Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
 Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight){
     window = NULL;
     screenSurface = NULL;
@@ -16,7 +18,7 @@ bool Game::initSDLScreen(){
 	else
 	{
 		//Create window
-		window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		window = SDL_CreateWindow( "SNAKE GAME", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( window == NULL )
 		{
 			printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
@@ -45,6 +47,28 @@ void Game::processInput(){
             while(SDL_PollEvent( &sdl_event ) != 0){
                 if( sdl_event.type == SDL_QUIT ){
                     game_is_running = false;
+                }else if(sdl_event.type == SDL_KEYDOWN){
+                    switch( sdl_event.key.keysym.sym ){
+                            case SDLK_UP:
+                                printf("UP \n");
+                            break;
+
+                            case SDLK_DOWN:
+                                printf("down \n");
+                            break;
+
+                            case SDLK_LEFT:
+                                printf("left \n");
+                            break;
+
+                            case SDLK_RIGHT:
+                                printf("right \n");
+                            break;
+
+                            default:
+                                printf("default \n");
+                            break;
+                        }
                 }
             }
 };
