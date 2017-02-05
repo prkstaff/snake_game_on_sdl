@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
 #include "Position.h"
+#include <unistd.h>
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
 Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight){
@@ -79,6 +80,7 @@ void Game::processInput(){
                                 printf("right \n");
                             break;
                             default:
+                                direction = DEFAULT;
                                 printf("default \n");
                             break;
                         }
@@ -86,32 +88,90 @@ void Game::processInput(){
             }
 };
 void Game::updateGame(){
-
+    Position head = snakePositions[snakePositions.size()-1];
+    if(direction != DEFAULT){
+        if(direction == RIGHT){
+            Position newPos(head.get_x()+1,head.get_y(), RIGHT);
+            snakePositions.push_back(newPos);
+        }else if(direction == LEFT){
+            Position newPos(head.get_x()-1,head.get_y(), LEFT);
+            snakePositions.push_back(newPos);
+        }else if(direction == UP){
+            Position newPos(head.get_x(),head.get_y()-1, UP);
+            snakePositions.push_back(newPos);
+        }else if(direction == DOWN){
+            Position newPos(head.get_x(),head.get_y()+1, DOWN);
+            snakePositions.push_back(newPos);
+        }
+    }
 };
 std::vector <int> Game::get_snake_params_for_drawing(std::vector <Position> pos, size_t index){
     //vector x, y, angle
         std::vector <int> vector_to_return;
+        int original_sprite_size = 90;
         int x_to_return;
         int y_to_return = 0;
         int angle_to_return;
         Position pedaco = pos[index];
         //if the tail, the first pedaco
         if(index==0){
-            x_to_return = SNAKE_TAIL*90;//sprite cut x
+            x_to_return = SNAKE_TAIL*original_sprite_size;//sprite cut x
             if(pedaco.get_direction() == DOWN) angle_to_return = 90;
             if(pedaco.get_direction() == UP) angle_to_return = 270;
             if(pedaco.get_direction() == LEFT) angle_to_return = 180;
             if(pedaco.get_direction() == RIGHT) angle_to_return = 0;
         //if is the head
         }else if(index == pos.size()-1){
-            x_to_return = SNAKE_HEAD*90;//sprite cut x
+            x_to_return = SNAKE_HEAD*original_sprite_size;//sprite cut x
             if(pedaco.get_direction() == DOWN) angle_to_return = 0;
             if(pedaco.get_direction() == UP) angle_to_return = 180;
             if(pedaco.get_direction() == LEFT) angle_to_return = 90;
             if(pedaco.get_direction() == RIGHT) angle_to_return = 270;
         }else{
-            x_to_return = SNAKE_BODY*90;//sprite cut x
-            angle_to_return = 0;
+            Position previous_pos = pos[index-1];
+            Position next_pos = pos[index+1];
+            //
+            //IF IT IS A TURN
+            if(previous_pos.get_x() != next_pos.get_x() && previous_pos.get_y() != next_pos.get_y()){
+                x_to_return = SNAKE_BODY_TURN*original_sprite_size;
+                if(pedaco.get_direction() == DOWN){
+                    // DOWN from left to right
+                    if(previous_pos.get_x() < next_pos.get_x()){
+                        angle_to_return = 270;
+                    }else{
+                        angle_to_return = 180;
+                    }
+                }else if(pedaco.get_direction() == UP){
+                    //if its going to the left
+                    if(previous_pos.get_x() > next_pos.get_x()){
+                        angle_to_return = 90;
+                    }else{
+                        angle_to_return = 0;
+                    }
+                }else if(pedaco.get_direction() == RIGHT){
+                    //IF is going up
+                    if(previous_pos.get_y() > next_pos.get_y()){
+                        angle_to_return = 180;
+                    }else{
+                        angle_to_return = 90;
+                    }
+                }else if(pedaco.get_direction() == LEFT){
+                    //IF is going up
+                    if(previous_pos.get_y() > next_pos.get_y()){
+                            angle_to_return = 270;
+                    }else{
+                        angle_to_return = 0;
+                    }
+                }
+            //IF ITS A BODY
+            }else{
+                x_to_return = SNAKE_BODY*original_sprite_size;//sprite cut x
+                if(pedaco.get_direction() == RIGHT || pedaco.get_direction() == LEFT){
+                    angle_to_return = 90;
+                }else{
+                    angle_to_return = 0;
+                }
+            }
         }
 
         //fill the vector
@@ -156,6 +216,8 @@ void Game::run(){
             SDL_RenderClear(renderer);
             drawGame();
             SDL_RenderPresent(renderer);
+            unsigned int microseconds = 400000;
+            usleep(microseconds);
             //User requests quit
         }
     }

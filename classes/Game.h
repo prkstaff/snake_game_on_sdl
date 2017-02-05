@@ -27,7 +27,8 @@ class Game
             UP=0,
             RIGHT,
             DOWN,
-            LEFT
+            LEFT,
+            DEFAULT,
         };
         int direction;
         enum SnakeSprites{
