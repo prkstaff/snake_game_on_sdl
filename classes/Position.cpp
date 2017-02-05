@@ -8,3 +8,6 @@ int Position::get_x(){
 int Position::get_y(){
     return y;
 };
+int Position::get_direction(){
+    return direction;
+}

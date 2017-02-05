@@ -15,6 +15,7 @@ class Game
         const int SCREEN_WIDTH;
         const int SCREEN_HEIGHT;
         bool game_is_running;
+        int snake_sprite_square_size;
         SDL_Surface *surface;
         SDL_Texture *sprite;
         SDL_Event sdl_event;
@@ -38,6 +39,7 @@ class Game
         };
         //SDL_Surface* loadSurface( std::string path);
         bool initSDLScreen();
+        std::vector <int> get_snake_params_for_drawing(std::vector <Position> pos, size_t index);
         void processInput();
         void updateGame();
         void drawGame();

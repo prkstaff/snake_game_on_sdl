@@ -5,9 +5,16 @@
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
 Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight){
     game_is_running = true;
-    Position initial_head(5,5,DOWN);
-    Position initial_tale(5,6,DOWN);
+    //
+    //initial snake position
+    snake_sprite_square_size = 60;
+    Position initial_tale(5,5,DOWN);
+    Position initial_body1(5,6,DOWN);
+    Position initial_body2(5,7,DOWN);
+    Position initial_head(5,8,DOWN);
     snakePositions.push_back(initial_tale);
+    snakePositions.push_back(initial_body1);
+    snakePositions.push_back(initial_body2);
     snakePositions.push_back(initial_head);
 
     //initital snake parts
@@ -31,7 +38,6 @@ bool Game::initSDLScreen(){
         else
         {
             //Get window surface
-           SDL_SetWindowPosition(window, 65, 126);
            surface = SDL_LoadBMP("/Users/renato/projectspace/snakegame/src/snake_apple_90x90x450.bmp");
             if(surface == NULL){
                 printf( "BMP could not Loaded! SDL_Error: %s\n", SDL_GetError() );
@@ -82,20 +88,54 @@ void Game::processInput(){
 void Game::updateGame(){
 
 };
+std::vector <int> Game::get_snake_params_for_drawing(std::vector <Position> pos, size_t index){
+    //vector x, y, angle
+        std::vector <int> vector_to_return;
+        int x_to_return;
+        int y_to_return = 0;
+        int angle_to_return;
+        Position pedaco = pos[index];
+        //if the tail, the first pedaco
+        if(index==0){
+            x_to_return = SNAKE_TAIL*90;//sprite cut x
+            if(pedaco.get_direction() == DOWN) angle_to_return = 90;
+            if(pedaco.get_direction() == UP) angle_to_return = 270;
+            if(pedaco.get_direction() == LEFT) angle_to_return = 180;
+            if(pedaco.get_direction() == RIGHT) angle_to_return = 0;
+        //if is the head
+        }else if(index == pos.size()-1){
+            x_to_return = SNAKE_HEAD*90;//sprite cut x
+            if(pedaco.get_direction() == DOWN) angle_to_return = 0;
+            if(pedaco.get_direction() == UP) angle_to_return = 180;
+            if(pedaco.get_direction() == LEFT) angle_to_return = 90;
+            if(pedaco.get_direction() == RIGHT) angle_to_return = 270;
+        }else{
+            x_to_return = SNAKE_BODY*90;//sprite cut x
+            angle_to_return = 0;
+        }
+
+        //fill the vector
+        vector_to_return.push_back(x_to_return);
+        vector_to_return.push_back(y_to_return);
+        vector_to_return.push_back(angle_to_return);
+
+        return vector_to_return;
+}
 void Game::drawGame(){
     for(size_t i = 0; i < snakePositions.size(); i++){
         Position pedaco = snakePositions[i];
         SDL_Rect src;
-        src.x = 0;//sprite cut x
-        src.y = 0;
+        std::vector <int> my_vect = get_snake_params_for_drawing(snakePositions,i);
+        src.x = my_vect[0];
+        src.y = my_vect[1];
         src.w = 90;
         src.h = 90;
         SDL_Rect dest;
-        dest.x = pedaco.get_x()*60;
-        dest.y = pedaco.get_y()*60;
-        dest.w = 60;//tamanho o tile da cobra para exibir
-        dest.h = 60;//tamanho o tile da cobra para exibir
-        SDL_RenderCopyEx(renderer, sprites, &src, &dest, 0, NULL, SDL_FLIP_NONE);
+        dest.x = pedaco.get_x()*snake_sprite_square_size;
+        dest.y = pedaco.get_y()*snake_sprite_square_size;
+        dest.w = snake_sprite_square_size;//tamanho o tile da cobra para exibir
+        dest.h = snake_sprite_square_size;//tamanho o tile da cobra para exibir
+        SDL_RenderCopyEx(renderer, sprites, &src, &dest, my_vect[2]/* angle */, NULL, SDL_FLIP_NONE);
     }
 };
 void Game::closeGame(){
