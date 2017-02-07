@@ -31,6 +31,7 @@ class Game
             DEFAULT,
         };
         int direction;
+        int old_direction;
         enum SnakeSprites{
             SNAKE_HEAD,
             SNAKE_BODY,
@@ -39,6 +40,7 @@ class Game
             APPLE
         };
         //SDL_Surface* loadSurface( std::string path);
+        void if_its_empty_move_snake(int x, int y, int direct);
         bool initSDLScreen();
         std::vector <int> get_snake_params_for_drawing(std::vector <Position> pos, size_t index);
         void processInput();

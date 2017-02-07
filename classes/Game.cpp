@@ -66,43 +66,59 @@ void Game::processInput(){
                     switch( sdl_event.key.keysym.sym ){
                             case SDLK_UP:
                                 direction = UP;
-                                printf("UP \n");
                             break;
                             case SDLK_DOWN:
                                 direction = DOWN;
-                                printf("down \n");
                             break;
                             case SDLK_LEFT:
                                 direction = LEFT;
-                                printf("left \n");
                             break;
                             case SDLK_RIGHT:
                                 direction = RIGHT;
-                                printf("right \n");
                             break;
                             default:
                                 direction = DEFAULT;
-                                printf("default \n");
                             break;
                         }
                 }
             }
 };
+void Game::if_its_empty_move_snake(int x, int y, int direct){
+    bool is_empty = true;
+    //check for snake
+    for(size_t i = 0; i < snakePositions.size(); i++){
+       if(snakePositions[i].get_x() == x && snakePositions[i].get_y() == y){
+           is_empty = false;
+           break;
+       }
+    }
+    //check for map borders
+    if(x < 0 || y < 0 || x > SCREEN_WIDTH-1 || y > SCREEN_HEIGHT -1){
+        is_empty = false;
+    }
+    if(is_empty){
+        Position newPos(x,y, direct);
+        snakePositions.push_back(newPos);
+        old_direction = direct;
+    }
+    //else game over
+}
 void Game::updateGame(){
     Position head = snakePositions[snakePositions.size()-1];
+    //
+    //dont let snake go backwards
+    if((direction==RIGHT && old_direction==LEFT) || (direction==LEFT && old_direction==RIGHT))direction = old_direction;
+    if((direction==DOWN && old_direction==UP) || (direction==UP && old_direction==DOWN))direction = old_direction;
+
     if(direction != DEFAULT){
         if(direction == RIGHT){
-            Position newPos(head.get_x()+1,head.get_y(), RIGHT);
-            snakePositions.push_back(newPos);
+                if_its_empty_move_snake(head.get_x()+1,head.get_y(), RIGHT);
         }else if(direction == LEFT){
-            Position newPos(head.get_x()-1,head.get_y(), LEFT);
-            snakePositions.push_back(newPos);
+                if_its_empty_move_snake(head.get_x()-1,head.get_y(), LEFT);
         }else if(direction == UP){
-            Position newPos(head.get_x(),head.get_y()-1, UP);
-            snakePositions.push_back(newPos);
+                if_its_empty_move_snake(head.get_x(),head.get_y()-1, UP);
         }else if(direction == DOWN){
-            Position newPos(head.get_x(),head.get_y()+1, DOWN);
-            snakePositions.push_back(newPos);
+                if_its_empty_move_snake(head.get_x(),head.get_y()+1, DOWN);
         }
     }
 };
@@ -217,7 +233,7 @@ void Game::run(){
             SDL_RenderClear(renderer);
             drawGame();
             SDL_RenderPresent(renderer);
-            unsigned int microseconds = 400000;
+            unsigned int microseconds = 300000;
             usleep(microseconds);
             //User requests quit
         }
