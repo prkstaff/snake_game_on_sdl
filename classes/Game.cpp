@@ -4,17 +4,16 @@
 #include <unistd.h>
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
-Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight){
+Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight), apple_position(2,2,DOWN){
     game_is_running = true;
     //
     //initial snake position
+    Position apple_position(2,2, DOWN);
     snake_sprite_square_size = 60;
-    Position initial_tale(5,5,DOWN);
-    Position initial_body1(5,6,DOWN);
+    Position initial_tale(5,6,DOWN);
     Position initial_body2(5,7,DOWN);
     Position initial_head(5,8,DOWN);
     snakePositions.push_back(initial_tale);
-    snakePositions.push_back(initial_body1);
     snakePositions.push_back(initial_body2);
     snakePositions.push_back(initial_head);
 
@@ -201,6 +200,19 @@ std::vector <int> Game::get_snake_params_for_drawing(std::vector <Position> pos,
         return vector_to_return;
 }
 void Game::drawGame(){
+    // Draw Apple
+    SDL_Rect apple_rect;
+    apple_rect.x = 4*90;
+    apple_rect.y = 0;
+    apple_rect.w = 90;
+    apple_rect.h = 90;
+    SDL_Rect apple_rect_dest;
+    apple_rect_dest.x = apple_position.get_x()*snake_sprite_square_size;
+    apple_rect_dest.y = apple_position.get_y()*snake_sprite_square_size;
+    apple_rect_dest.w = snake_sprite_square_size;
+    apple_rect_dest.h = snake_sprite_square_size;
+    SDL_RenderCopyEx(renderer, sprites, &apple_rect, &apple_rect_dest, 0/* angle */, NULL, SDL_FLIP_NONE);
+// Draw Snake
     for(size_t i = 0; i < snakePositions.size(); i++){
         Position pedaco = snakePositions[i];
         SDL_Rect src;

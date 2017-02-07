@@ -22,6 +22,7 @@ class Game
         SDL_Window *window;
         SDL_Renderer *renderer;
         SDL_Texture *sprites;
+        Position apple_position;
         std::vector <Position>  snakePositions;
         enum Directions{
             UP=0,
