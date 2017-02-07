@@ -99,6 +99,7 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
     if(is_empty){
         Position newPos(x,y, direct);
         snakePositions.push_back(newPos);
+        snakePositions.erase(snakePositions.begin());
         old_direction = direct;
     }
     //else game over
@@ -133,10 +134,11 @@ std::vector <int> Game::get_snake_params_for_drawing(std::vector <Position> pos,
         //if the tail, the first pedaco
         if(index==0){
             x_to_return = SNAKE_TAIL*original_sprite_size;//sprite cut x
-            if(pedaco.get_direction() == DOWN) angle_to_return = 90;
-            if(pedaco.get_direction() == UP) angle_to_return = 270;
-            if(pedaco.get_direction() == LEFT) angle_to_return = 180;
-            if(pedaco.get_direction() == RIGHT) angle_to_return = 0;
+            Position next_pos = pos[index+1];
+            if(next_pos.get_x() > pedaco.get_x()) angle_to_return = 0;//RIGHT
+            if(next_pos.get_x() < pedaco.get_x()) angle_to_return = 180;//LEFT
+            if(next_pos.get_y() < pedaco.get_y()) angle_to_return = 270;//UP
+            if(next_pos.get_y() > pedaco.get_y()) angle_to_return = 90;//DOWN
         //if is the head
         }else if(index == pos.size()-1){
             x_to_return = SNAKE_HEAD*original_sprite_size;//sprite cut x
