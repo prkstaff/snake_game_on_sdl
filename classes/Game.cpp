@@ -30,7 +30,7 @@ bool Game::initSDLScreen(){
 	}
 	else
 	{
-        SDL_CreateWindowAndRenderer( SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer);
+        SDL_CreateWindowAndRenderer( SCREEN_WIDTH*snake_sprite_square_size, SCREEN_HEIGHT*snake_sprite_square_size, SDL_WINDOW_RESIZABLE, &window, &renderer);
         if( window == NULL )
         {
             printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
@@ -40,6 +40,7 @@ bool Game::initSDLScreen(){
         {
             //Get window surface
            surface = SDL_LoadBMP("/Users/renato/projectspace/snakegame/src/snake_apple_90x90x450.bmp");
+           SDL_SetColorKey(surface, SDL_TRUE, 0xFFFFFF);
             if(surface == NULL){
                 printf( "BMP could not Loaded! SDL_Error: %s\n", SDL_GetError() );
             }else{
