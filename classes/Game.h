@@ -23,6 +23,7 @@ class Game
         SDL_Renderer *renderer;
         SDL_Texture *sprites;
         Position apple_position;
+        bool ate_apple;
         std::vector <Position>  snakePositions;
         enum Directions{
             UP=0,
@@ -41,6 +42,7 @@ class Game
             APPLE
         };
         //SDL_Surface* loadSurface( std::string path);
+        bool check_is_snake_position(int x, int y);
         void if_its_empty_move_snake(int x, int y, int direct);
         bool initSDLScreen();
         std::vector <int> get_snake_params_for_drawing(std::vector <Position> pos, size_t index);

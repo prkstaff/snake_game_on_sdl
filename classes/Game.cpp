@@ -9,6 +9,7 @@ Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight
     //
     //initial snake position
     Position apple_position(2,2, DOWN);
+    ate_apple =  false;
     snake_sprite_square_size = 60;
     Position initial_tale(5,6,DOWN);
     Position initial_body2(5,7,DOWN);
@@ -82,6 +83,17 @@ void Game::processInput(){
                 }
             }
 };
+bool Game::check_is_snake_position(int x, int y){
+    int has_snake_pos = false;
+    for(size_t i = 0; i<snakePositions.size(); i++){
+        Position pedaco = snakePositions[i];
+        if(pedaco.get_x() == x && pedaco.get_y() == y){
+            has_snake_pos = true;
+            break;
+        }
+    }
+    return has_snake_pos;
+}
 void Game::if_its_empty_move_snake(int x, int y, int direct){
     bool is_empty = true;
     //check for snake
@@ -95,10 +107,26 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
     if(x < 0 || y < 0 || x > SCREEN_WIDTH-1 || y > SCREEN_HEIGHT -1){
         is_empty = false;
     }
+
+    //check if is biting the apple
+    if(x == apple_position.get_x() && y == apple_position.get_y()){
+        int new_x;
+        int new_y;
+        do{
+            new_x = rand() % SCREEN_WIDTH ;
+            new_y = rand() % SCREEN_HEIGHT ;
+        }while(check_is_snake_position(new_x,new_y));
+        ate_apple = true;
+        apple_position.set_x_y(new_x,new_y);
+    }
+
     if(is_empty){
         Position newPos(x,y, direct);
         snakePositions.push_back(newPos);
-        snakePositions.erase(snakePositions.begin());
+        if(ate_apple == false){
+            snakePositions.erase(snakePositions.begin());
+        }
+        ate_apple = false;
         old_direction = direct;
     }
     //else game over
@@ -243,7 +271,8 @@ void Game::run(){
         while(game_is_running){
             processInput();
             updateGame();
-            SDL_SetRenderDrawColor(renderer, 0x09, 0x51, 0x18, 0xff);
+            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+            //SDL_SetRenderDrawColor(renderer, 0x09, 0x51, 0x18, 0xff);
             SDL_RenderClear(renderer);
             drawGame();
             SDL_RenderPresent(renderer);
