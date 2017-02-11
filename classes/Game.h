@@ -16,6 +16,10 @@ class Game
         const int SCREEN_HEIGHT;
         bool game_is_running;
         int snake_sprite_square_size;
+        int score_board_width;
+        int game_score;
+        int apples_ate;
+        int movements_made;
         SDL_Surface *surface;
         SDL_Texture *sprite;
         SDL_Event sdl_event;

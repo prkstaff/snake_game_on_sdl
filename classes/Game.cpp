@@ -2,15 +2,26 @@
 #include <iostream>
 #include "Position.h"
 #include <unistd.h>
+#include <SDL2/SDL_ttf.h>
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
 Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight), apple_position(2,2,DOWN){
     game_is_running = true;
     //
+    //initial values
+    movements_made = 0;
+    apples_ate = 0;
+    game_score = 0;
+    
     //initial snake position
     Position apple_position(2,2, DOWN);
     ate_apple =  false;
     snake_sprite_square_size = 60;
+    //
+    //Score board width
+    score_board_width = 4;
+
+    //initital snake parts
     Position initial_tale(5,6,DOWN);
     Position initial_body2(5,7,DOWN);
     Position initial_head(5,8,DOWN);
@@ -18,10 +29,14 @@ Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight
     snakePositions.push_back(initial_body2);
     snakePositions.push_back(initial_head);
 
-    //initital snake parts
 };
 bool Game::initSDLScreen(){
     bool success = true;
+    //Init SDL TTF API
+    if(TTF_Init()==-1) {
+        printf("TTF_Init: %s\n", TTF_GetError());
+        exit(2);
+    }
     //Initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -83,6 +98,7 @@ void Game::processInput(){
                 }
             }
 };
+
 bool Game::check_is_snake_position(int x, int y){
     int has_snake_pos = false;
     for(size_t i = 0; i<snakePositions.size(); i++){
@@ -94,6 +110,7 @@ bool Game::check_is_snake_position(int x, int y){
     }
     return has_snake_pos;
 }
+
 void Game::if_its_empty_move_snake(int x, int y, int direct){
     bool is_empty = true;
     //check for snake
@@ -104,7 +121,7 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
        }
     }
     //check for map borders
-    if(x < 0 || y < 0 || x > SCREEN_WIDTH-1 || y > SCREEN_HEIGHT -1){
+    if(x < 0 || y < 0 || x > SCREEN_WIDTH-score_board_width-1 || y > SCREEN_HEIGHT -1){
         is_empty = false;
     }
 
@@ -113,22 +130,25 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
         int new_x;
         int new_y;
         do{
-            new_x = rand() % SCREEN_WIDTH ;
+            new_x = rand() % (SCREEN_WIDTH - score_board_width) ;
             new_y = rand() % SCREEN_HEIGHT ;
         }while(check_is_snake_position(new_x,new_y));
         ate_apple = true;
         apple_position.set_x_y(new_x,new_y);
+        game_score = game_score+10;
     }
 
     if(is_empty){
         Position newPos(x,y, direct);
         snakePositions.push_back(newPos);
+        apples_ate = movements_made +1;
         if(ate_apple == false){
             snakePositions.erase(snakePositions.begin());
         }
         ate_apple = false;
         old_direction = direct;
     }
+    movements_made = movements_made +1;
     //else game over
 }
 void Game::updateGame(){
@@ -228,7 +248,23 @@ std::vector <int> Game::get_snake_params_for_drawing(std::vector <Position> pos,
         return vector_to_return;
 }
 void Game::drawGame(){
-    // Draw Apple
+
+// Draw the grass
+    SDL_Surface *grass_surface = SDL_LoadBMP("src/grass.bmp");
+    SDL_Texture *grass_texture = SDL_CreateTextureFromSurface(renderer, grass_surface);
+    if (grass_texture == NULL) {
+        fprintf(stderr, "CreateTextureFromSurface failed: %s\n", SDL_GetError());
+        exit(1);
+    }
+    SDL_FreeSurface(grass_surface);
+    grass_surface = NULL;
+    SDL_Rect grass_rect;
+    grass_rect.x = 0;
+    grass_rect.y = 0;
+    grass_rect.w = SCREEN_WIDTH*snake_sprite_square_size-score_board_width*snake_sprite_square_size;
+    grass_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
+    SDL_RenderCopy(renderer, grass_texture, NULL, &grass_rect);
+// Draw Apple
     SDL_Rect apple_rect;
     apple_rect.x = 4*90;
     apple_rect.y = 0;
@@ -256,6 +292,63 @@ void Game::drawGame(){
         dest.h = snake_sprite_square_size;//tamanho o tile da cobra para exibir
         SDL_RenderCopyEx(renderer, sprites, &src, &dest, my_vect[2]/* angle */, NULL, SDL_FLIP_NONE);
     }
+//Draw Score Board
+    //score_board.draw_score_board(render);
+    SDL_Surface *score_surface = SDL_CreateRGBSurface(0, 400,400, 32, 0,0,0,0);
+    if (surface == NULL) {
+        SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
+        exit(1);
+    }
+    SDL_FillRect(score_surface, NULL, SDL_MapRGB(score_surface->format, 68, 55, 55));
+    SDL_Texture *score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
+    if( score_texture == NULL) {
+        SDL_Log("SDL_CreateTextureFromSurface() failed: %s", SDL_GetError());
+        exit(1);
+    }
+    SDL_Rect score_rect;
+    score_rect.x = SCREEN_WIDTH*snake_sprite_square_size - score_board_width*snake_sprite_square_size;
+    score_rect.y = 0;
+    score_rect.w = score_board_width*snake_sprite_square_size;
+    score_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
+    SDL_RenderCopy(renderer, score_texture, NULL, &score_rect);
+    SDL_DestroyTexture(score_texture);
+
+//Draw scoreboard texts
+    TTF_Font* Sans = TTF_OpenFont("/Users/renato/projectspace/snakegame/src/kongtext.ttf", 24);
+    if(Sans == NULL){
+        printf("TTF_OpenFont: %s\n", TTF_GetError());
+    }
+
+    SDL_Color White = {255, 255, 255, 0};
+
+    //GAME LOGO
+    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, "SNAKENATOR", White);
+
+    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+    SDL_Rect Message_rect;
+    Message_rect.x = 5;
+    Message_rect.y = 10;
+    Message_rect.w = 300;
+    Message_rect.h = 35;
+    SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+    SDL_DestroyTexture(Message);
+
+    //
+    int score_board_x = (SCREEN_WIDTH*snake_sprite_square_size - score_board_width*snake_sprite_square_size) + 20;
+    //SCOREBOARD TITLE
+    //
+    //
+    SDL_Surface* surfaceMessage2 = TTF_RenderText_Solid(Sans, "Score Board", White);
+
+    SDL_Texture* Message2 = SDL_CreateTextureFromSurface(renderer, surfaceMessage2);
+    SDL_Rect Message_rect2;
+    Message_rect2.x = score_board_x;
+    Message_rect2.y = 10;
+    Message_rect2.w = 180;
+    Message_rect2.h = 25;
+    SDL_RenderCopy(renderer, Message2, NULL, &Message_rect2);
+    SDL_DestroyTexture(Message2);
+
 };
 void Game::closeGame(){
     SDL_DestroyRenderer(renderer);
@@ -271,7 +364,7 @@ void Game::run(){
         while(game_is_running){
             processInput();
             updateGame();
-            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+            SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
             //SDL_SetRenderDrawColor(renderer, 0x09, 0x51, 0x18, 0xff);
             SDL_RenderClear(renderer);
             drawGame();
