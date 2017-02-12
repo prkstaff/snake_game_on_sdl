@@ -3,6 +3,9 @@
 #include "Position.h"
 #include <unistd.h>
 #include <SDL2/SDL_ttf.h>
+#include <string>
+#include <sstream>
+#include <iostream>
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
 Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight), apple_position(2,2,DOWN){
@@ -12,7 +15,7 @@ Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight
     movements_made = 0;
     apples_ate = 0;
     game_score = 0;
-    
+    //
     //initial snake position
     Position apple_position(2,2, DOWN);
     ate_apple =  false;
@@ -134,6 +137,7 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
             new_y = rand() % SCREEN_HEIGHT ;
         }while(check_is_snake_position(new_x,new_y));
         ate_apple = true;
+        apples_ate = apples_ate +1;
         apple_position.set_x_y(new_x,new_y);
         game_score = game_score+10;
     }
@@ -141,7 +145,6 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
     if(is_empty){
         Position newPos(x,y, direct);
         snakePositions.push_back(newPos);
-        apples_ate = movements_made +1;
         if(ate_apple == false){
             snakePositions.erase(snakePositions.begin());
         }
@@ -348,6 +351,51 @@ void Game::drawGame(){
     Message_rect2.h = 25;
     SDL_RenderCopy(renderer, Message2, NULL, &Message_rect2);
     SDL_DestroyTexture(Message2);
+
+    //SCOREBOARD APPLES ATE
+    std::string apple_text = "Apples: ";
+    std::stringstream apples_text_stream;
+    apples_text_stream << apple_text << apples_ate;
+    SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, apples_text_stream.str().c_str(), White);
+
+    SDL_Texture* Message3 = SDL_CreateTextureFromSurface(renderer, surfaceMessage3);
+    SDL_Rect Message_rect3;
+    Message_rect3.x = score_board_x;
+    Message_rect3.y = 135;
+    Message_rect3.w = 180;
+    Message_rect3.h = 25;
+    SDL_RenderCopy(renderer, Message3, NULL, &Message_rect3);
+    SDL_DestroyTexture(Message3);
+
+    //SCOREBOARD APPLES ATE
+    std::string score_text = "Score: ";
+    std::stringstream score_text_stream;
+    score_text_stream << score_text << game_score;
+    SDL_Surface* surfaceMessage4 = TTF_RenderText_Solid(Sans, score_text_stream.str().c_str(), White);
+
+    SDL_Texture* Message4 = SDL_CreateTextureFromSurface(renderer, surfaceMessage4);
+    SDL_Rect Message_rect4;
+    Message_rect4.x = score_board_x;
+    Message_rect4.y = 180;
+    Message_rect4.w = 180;
+    Message_rect4.h = 25;
+    SDL_RenderCopy(renderer, Message4, NULL, &Message_rect4);
+    SDL_DestroyTexture(Message4);
+
+    //SCOREBOARD APPLES ATE
+    std::string step_text = "Steps: ";
+    std::stringstream step_text_stream;
+    step_text_stream << step_text << movements_made;
+    SDL_Surface* surfaceMessage5 = TTF_RenderText_Solid(Sans, step_text_stream.str().c_str(), White);
+
+    SDL_Texture* Message5 = SDL_CreateTextureFromSurface(renderer, surfaceMessage5);
+    SDL_Rect Message_rect5;
+    Message_rect5.x = score_board_x;
+    Message_rect5.y = 225;
+    Message_rect5.w = 180;
+    Message_rect5.h = 25;
+    SDL_RenderCopy(renderer, Message5, NULL, &Message_rect5);
+    SDL_DestroyTexture(Message5);
 
 };
 void Game::closeGame(){
