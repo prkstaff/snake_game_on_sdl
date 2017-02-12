@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
 #include "Position.h"
+#include "TextDraw.h"
 #include <unistd.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
@@ -386,17 +387,8 @@ void Game::drawGame(){
     std::string step_text = "Steps: ";
     std::stringstream step_text_stream;
     step_text_stream << step_text << movements_made;
-    SDL_Surface* surfaceMessage5 = TTF_RenderText_Solid(Sans, step_text_stream.str().c_str(), White);
-
-    SDL_Texture* Message5 = SDL_CreateTextureFromSurface(renderer, surfaceMessage5);
-    SDL_Rect Message_rect5;
-    Message_rect5.x = score_board_x;
-    Message_rect5.y = 225;
-    Message_rect5.w = 180;
-    Message_rect5.h = 25;
-    SDL_RenderCopy(renderer, Message5, NULL, &Message_rect5);
-    SDL_DestroyTexture(Message5);
-
+    TextDraw textmanager;
+    textmanager.draw_text(renderer, "src/kongtext.ttf", step_text_stream.str().c_str(), score_board_x, 225, 24, 180, 25);
 };
 void Game::closeGame(){
     SDL_DestroyRenderer(renderer);
