@@ -20,4 +20,10 @@ void TextDraw::draw_text(SDL_Renderer *renderer, const char *font, const char *f
     Message_rect.h = rect_h;
     SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
     SDL_DestroyTexture(Message);
-}
+};
+
+std::string TextDraw::string_int_concatenation(std::string the_string, int the_int){
+    std::string my_str;
+    my_str = the_string + std::to_string(the_int);
+    return my_str;
+};

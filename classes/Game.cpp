@@ -318,77 +318,25 @@ void Game::drawGame(){
     SDL_DestroyTexture(score_texture);
 
 //Draw scoreboard texts
-    TTF_Font* Sans = TTF_OpenFont("/Users/renato/projectspace/snakegame/src/kongtext.ttf", 24);
-    if(Sans == NULL){
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-    }
-
-    SDL_Color White = {255, 255, 255, 0};
-
+    TextDraw textmanager;
     //GAME LOGO
-    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, "SNAKENATOR", White);
-
-    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-    SDL_Rect Message_rect;
-    Message_rect.x = 5;
-    Message_rect.y = 10;
-    Message_rect.w = 300;
-    Message_rect.h = 35;
-    SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
-    SDL_DestroyTexture(Message);
+    textmanager.draw_text(renderer, "src/kongtext.ttf", "SNAKENATOR", 5, 10, 24, 300, 35);
 
     //
     int score_board_x = (SCREEN_WIDTH*snake_sprite_square_size - score_board_width*snake_sprite_square_size) + 20;
     //SCOREBOARD TITLE
     //
     //
-    SDL_Surface* surfaceMessage2 = TTF_RenderText_Solid(Sans, "Score Board", White);
-
-    SDL_Texture* Message2 = SDL_CreateTextureFromSurface(renderer, surfaceMessage2);
-    SDL_Rect Message_rect2;
-    Message_rect2.x = score_board_x;
-    Message_rect2.y = 10;
-    Message_rect2.w = 180;
-    Message_rect2.h = 25;
-    SDL_RenderCopy(renderer, Message2, NULL, &Message_rect2);
-    SDL_DestroyTexture(Message2);
+    textmanager.draw_text(renderer, "src/kongtext.ttf", "Score Board", score_board_x, 10, 24, 180, 25);
 
     //SCOREBOARD APPLES ATE
-    std::string apple_text = "Apples: ";
-    std::stringstream apples_text_stream;
-    apples_text_stream << apple_text << apples_ate;
-    SDL_Surface* surfaceMessage3 = TTF_RenderText_Solid(Sans, apples_text_stream.str().c_str(), White);
+    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Apples: ", apples_ate).c_str(), score_board_x, 135, 24, 180, 25);
 
-    SDL_Texture* Message3 = SDL_CreateTextureFromSurface(renderer, surfaceMessage3);
-    SDL_Rect Message_rect3;
-    Message_rect3.x = score_board_x;
-    Message_rect3.y = 135;
-    Message_rect3.w = 180;
-    Message_rect3.h = 25;
-    SDL_RenderCopy(renderer, Message3, NULL, &Message_rect3);
-    SDL_DestroyTexture(Message3);
+    //Text  APPLES ATE
+    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Score: ", game_score).c_str(), score_board_x, 180, 24, 180, 25);
 
-    //SCOREBOARD APPLES ATE
-    std::string score_text = "Score: ";
-    std::stringstream score_text_stream;
-    score_text_stream << score_text << game_score;
-    SDL_Surface* surfaceMessage4 = TTF_RenderText_Solid(Sans, score_text_stream.str().c_str(), White);
-
-    SDL_Texture* Message4 = SDL_CreateTextureFromSurface(renderer, surfaceMessage4);
-    SDL_Rect Message_rect4;
-    Message_rect4.x = score_board_x;
-    Message_rect4.y = 180;
-    Message_rect4.w = 180;
-    Message_rect4.h = 25;
-    SDL_RenderCopy(renderer, Message4, NULL, &Message_rect4);
-    SDL_DestroyTexture(Message4);
-
-    //SCOREBOARD APPLES ATE
-    std::string step_text = "Steps: ";
-    std::stringstream step_text_stream;
-    step_text_stream << step_text << movements_made;
-    TextDraw textmanager;
-    textmanager.draw_text(renderer, "src/kongtext.ttf", step_text_stream.str().c_str(), score_board_x, 225, 24, 180, 25);
+    //Text Movements Made
+    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Steps: ", movements_made).c_str(), score_board_x, 225, 24, 180, 25);
 };
 void Game::closeGame(){
     SDL_DestroyRenderer(renderer);
