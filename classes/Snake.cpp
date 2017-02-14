@@ -22,3 +22,15 @@ void Snake::add_position(Position new_pos){
 void Snake::erase_first_position(){
     snakePositions.erase(snakePositions.begin());
 };
+
+bool Snake::is_snake_position(int x, int y){
+    int has_snake_pos = false;
+    for(size_t i = 0; i< get_positions().size(); i++){
+        Position pedaco = get_positions()[i];
+        if(pedaco.get_x() == x && pedaco.get_y() == y){
+            has_snake_pos = true;
+            break;
+        }
+    }
+    return has_snake_pos;
+}

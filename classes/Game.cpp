@@ -96,27 +96,14 @@ void Game::processInput(){
             }
 };
 
-bool Game::check_is_snake_position(int x, int y){
-    int has_snake_pos = false;
-    for(size_t i = 0; i< snake.get_positions().size(); i++){
-        Position pedaco = snake.get_positions()[i];
-        if(pedaco.get_x() == x && pedaco.get_y() == y){
-            has_snake_pos = true;
-            break;
-        }
-    }
-    return has_snake_pos;
-}
-
 void Game::if_its_empty_move_snake(int x, int y, int direct){
     bool is_empty = true;
+
     //check for snake
-    for(size_t i = 0; i < snake.get_positions().size(); i++){
-       if(snake.get_positions()[i].get_x() == x && snake.get_positions()[i].get_y() == y){
+       if(snake.is_snake_position(x, y)){
            is_empty = false;
-           break;
        }
-    }
+
     //check for map borders
     if(x < 0 || y < 0 || x > SCREEN_WIDTH-score_board_width-1 || y > SCREEN_HEIGHT -1){
         is_empty = false;
@@ -129,7 +116,7 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
         do{
             new_x = rand() % (SCREEN_WIDTH - score_board_width) ;
             new_y = rand() % SCREEN_HEIGHT ;
-        }while(check_is_snake_position(new_x,new_y));
+        }while(snake.is_snake_position(new_x,new_y));
         ate_apple = true;
         apples_ate = apples_ate +1;
         apple_position.set_x_y(new_x,new_y);
@@ -261,6 +248,9 @@ void Game::drawGame(){
     grass_rect.w = SCREEN_WIDTH*snake_sprite_square_size-score_board_width*snake_sprite_square_size;
     grass_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
     SDL_RenderCopy(renderer, grass_texture, NULL, &grass_rect);
+    //
+    // Todo, create apple class with a draw method and refactor below
+    //
 // Draw Apple
     SDL_Rect apple_rect;
     apple_rect.x = 4*90;
@@ -273,6 +263,9 @@ void Game::drawGame(){
     apple_rect_dest.w = snake_sprite_square_size;
     apple_rect_dest.h = snake_sprite_square_size;
     SDL_RenderCopyEx(renderer, sprites, &apple_rect, &apple_rect_dest, 0/* angle */, NULL, SDL_FLIP_NONE);
+    //
+    // TODO, create draw method in snake class and refactor below
+    //
 // Draw Snake
     for(size_t i = 0; i < snake.get_positions().size(); i++){
         Position pedaco = snake.get_positions()[i];
@@ -289,6 +282,9 @@ void Game::drawGame(){
         dest.h = snake_sprite_square_size;//tamanho o tile da cobra para exibir
         SDL_RenderCopyEx(renderer, sprites, &src, &dest, my_vect[2]/* angle */, NULL, SDL_FLIP_NONE);
     }
+    //
+    // TODO, create ScoreBoard class with draw mathod and refactor below
+    //
 //Draw Score Board
     //score_board.draw_score_board(render);
     SDL_Surface *score_surface = SDL_CreateRGBSurface(0, 400,400, 32, 0,0,0,0);

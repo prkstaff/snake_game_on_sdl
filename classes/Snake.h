@@ -12,6 +12,7 @@ class Snake{
         std::vector <Position> get_positions();
         void add_position(Position new_pos);
         void erase_first_position();
+        bool is_snake_position(int x, int y);
 };
 #endif /* ifndef _SNAKE_
 class Snake{

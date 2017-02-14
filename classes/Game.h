@@ -17,6 +17,13 @@ enum Directions{
     LEFT,
     DEFAULT,
 };
+enum SnakeSprites{
+    SNAKE_HEAD,
+    SNAKE_BODY,
+    SNAKE_BODY_TURN,
+    SNAKE_TAIL,
+    APPLE
+};
 class Game
 {
     private:
@@ -39,13 +46,6 @@ class Game
         bool ate_apple;
         int direction;
         int old_direction;
-        enum SnakeSprites{
-            SNAKE_HEAD,
-            SNAKE_BODY,
-            SNAKE_BODY_TURN,
-            SNAKE_TAIL,
-            APPLE
-        };
         //SDL_Surface* loadSurface( std::string path);
         bool check_is_snake_position(int x, int y);
         void if_its_empty_move_snake(int x, int y, int direct);
