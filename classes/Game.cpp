@@ -9,7 +9,7 @@
 #include <iostream>
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
-Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight), apple_position(2,2,DOWN){
+Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight), apple_position(2,2,DOWN), snake(5,2){
     game_is_running = true;
     //
     //initial values
@@ -24,15 +24,8 @@ Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight
     //
     //Score board width
     score_board_width = 4;
-
-    //initital snake parts
-    Position initial_tale(5,6,DOWN);
-    Position initial_body2(5,7,DOWN);
-    Position initial_head(5,8,DOWN);
-    snakePositions.push_back(initial_tale);
-    snakePositions.push_back(initial_body2);
-    snakePositions.push_back(initial_head);
-
+    Snake snake(5,2);
+    //initialize snake
 };
 bool Game::initSDLScreen(){
     bool success = true;
@@ -105,8 +98,8 @@ void Game::processInput(){
 
 bool Game::check_is_snake_position(int x, int y){
     int has_snake_pos = false;
-    for(size_t i = 0; i<snakePositions.size(); i++){
-        Position pedaco = snakePositions[i];
+    for(size_t i = 0; i< snake.get_positions().size(); i++){
+        Position pedaco = snake.get_positions()[i];
         if(pedaco.get_x() == x && pedaco.get_y() == y){
             has_snake_pos = true;
             break;
@@ -118,8 +111,8 @@ bool Game::check_is_snake_position(int x, int y){
 void Game::if_its_empty_move_snake(int x, int y, int direct){
     bool is_empty = true;
     //check for snake
-    for(size_t i = 0; i < snakePositions.size(); i++){
-       if(snakePositions[i].get_x() == x && snakePositions[i].get_y() == y){
+    for(size_t i = 0; i < snake.get_positions().size(); i++){
+       if(snake.get_positions()[i].get_x() == x && snake.get_positions()[i].get_y() == y){
            is_empty = false;
            break;
        }
@@ -145,9 +138,9 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
 
     if(is_empty){
         Position newPos(x,y, direct);
-        snakePositions.push_back(newPos);
+        snake.add_position(newPos);
         if(ate_apple == false){
-            snakePositions.erase(snakePositions.begin());
+            snake.erase_first_position();
         }
         ate_apple = false;
         old_direction = direct;
@@ -156,7 +149,7 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
     //else game over
 }
 void Game::updateGame(){
-    Position head = snakePositions[snakePositions.size()-1];
+    Position head = snake.get_positions()[snake.get_positions().size()-1];
     //
     //dont let snake go backwards
     if((direction==RIGHT && old_direction==LEFT) || (direction==LEFT && old_direction==RIGHT))direction = old_direction;
@@ -281,10 +274,10 @@ void Game::drawGame(){
     apple_rect_dest.h = snake_sprite_square_size;
     SDL_RenderCopyEx(renderer, sprites, &apple_rect, &apple_rect_dest, 0/* angle */, NULL, SDL_FLIP_NONE);
 // Draw Snake
-    for(size_t i = 0; i < snakePositions.size(); i++){
-        Position pedaco = snakePositions[i];
+    for(size_t i = 0; i < snake.get_positions().size(); i++){
+        Position pedaco = snake.get_positions()[i];
         SDL_Rect src;
-        std::vector <int> my_vect = get_snake_params_for_drawing(snakePositions,i);
+        std::vector <int> my_vect = get_snake_params_for_drawing(snake.get_positions(),i);
         src.x = my_vect[0];
         src.y = my_vect[1];
         src.w = 90;

@@ -1,7 +1,7 @@
 all: snake
 
-snake: main.o Game.o Position.o TextDraw.o
-	g++ main.o Game.o  Position.o TextDraw.o -o snakegame -L/usr/local/lib -lSDL2 -lSDL2_ttf
+snake: main.o Game.o Position.o TextDraw.o Snake.o
+	g++ main.o Game.o  Position.o TextDraw.o Snake.o -o snakegame -L/usr/local/lib -lSDL2 -lSDL2_ttf
 
 main.o:
 	g++  -c main.cpp
@@ -14,6 +14,9 @@ Position.o:
 
 TextDraw.o:
 	g++ -c classes/TextDraw.cpp
+
+Snake.o:
+	g++ -c classes/Snake.cpp
 
 clean:
 	rm *.o snakegame

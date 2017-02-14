@@ -6,9 +6,17 @@
 #include <string>
 #include "Position.h"
 #include <vector>
+#include "Snake.h"
 
 //26m https://www.youtube.com/watch?v=nK_sT12h22s&list=PLt1n3PgXIOdmpmI_0PTOad7W0MlyAbHod&index=2
 //
+enum Directions{
+    UP=0,
+    RIGHT,
+    DOWN,
+    LEFT,
+    DEFAULT,
+};
 class Game
 {
     private:
@@ -27,15 +35,8 @@ class Game
         SDL_Renderer *renderer;
         SDL_Texture *sprites;
         Position apple_position;
+        Snake snake;
         bool ate_apple;
-        std::vector <Position>  snakePositions;
-        enum Directions{
-            UP=0,
-            RIGHT,
-            DOWN,
-            LEFT,
-            DEFAULT,
-        };
         int direction;
         int old_direction;
         enum SnakeSprites{
