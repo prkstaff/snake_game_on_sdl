@@ -50,7 +50,6 @@ class Game
         bool check_is_snake_position(int x, int y);
         void if_its_empty_move_snake(int x, int y, int direct);
         bool initSDLScreen();
-        std::vector <int> get_snake_params_for_drawing(std::vector <Position> pos, size_t index);
         void processInput();
         void updateGame();
         void drawGame();
