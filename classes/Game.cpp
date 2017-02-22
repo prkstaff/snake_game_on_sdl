@@ -142,8 +142,8 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
         }
         ate_apple = false;
         old_direction = direct;
+        movements_made = movements_made +1;
     }
-    movements_made = movements_made +1;
     //else game over
 }
 void Game::updateGame(){
