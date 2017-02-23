@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string>
 #include "Position.h"
+#include "InputHandler.h"
 #include <vector>
 #include "Snake.h"
 
@@ -43,6 +44,7 @@ class Game
         SDL_Texture *sprites;
         Position apple_position;
         Snake snake;
+        InputHandler input_handler;
         bool ate_apple;
         int direction;
         int old_direction;

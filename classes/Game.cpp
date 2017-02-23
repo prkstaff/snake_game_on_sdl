@@ -79,31 +79,6 @@ bool Game::initSDLScreen(){
 
 }
 
-void Game::processInput(){
-            while(SDL_PollEvent( &sdl_event ) != 0){
-                if( sdl_event.type == SDL_QUIT ){
-                    game_is_running = false;
-                }else if(sdl_event.type == SDL_KEYDOWN){
-                    switch( sdl_event.key.keysym.sym ){
-                            case SDLK_UP:
-                                direction = UP;
-                            break;
-                            case SDLK_DOWN:
-                                direction = DOWN;
-                            break;
-                            case SDLK_LEFT:
-                                direction = LEFT;
-                            break;
-                            case SDLK_RIGHT:
-                                direction = RIGHT;
-                            break;
-                            default:
-                                direction = DEFAULT;
-                            break;
-                        }
-                }
-            }
-};
 
 void Game::if_its_empty_move_snake(int x, int y, int direct){
     bool is_empty = true;
@@ -258,7 +233,8 @@ void Game::run(){
     //This is the game loop
     if(initSDLScreen()){
         while(game_is_running){
-            processInput();
+            input_handler.handle_input(&game_is_running, sdl_event, &direction);
+            //processInput();
             updateGame();
             SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
             //SDL_SetRenderDrawColor(renderer, 0x09, 0x51, 0x18, 0xff);
