@@ -4,6 +4,7 @@
 Snake::Snake(int initial_x, int initial_y){
 
     //initial Snake
+    snake_direction = DOWN;
     Position initial_tale(initial_x,initial_y,DOWN);
     Position initial_body2(initial_x,initial_y+1,DOWN);
     Position initial_head(initial_x,initial_y+2,DOWN);
@@ -12,7 +13,6 @@ Snake::Snake(int initial_x, int initial_y){
     snakePositions.push_back(initial_head);
 
 }
-
 std::vector <Position> Snake::get_positions(){
     return snakePositions;
 }
@@ -126,6 +126,14 @@ void Snake::draw(SDL_Renderer *renderer, int snake_sprite_square_size, SDL_Textu
         dest.y = pedaco.get_y()*snake_sprite_square_size;
         dest.w = snake_sprite_square_size;//tamanho o tile da cobra para exibir
         dest.h = snake_sprite_square_size;//tamanho o tile da cobra para exibir
+
         SDL_RenderCopyEx(renderer, sprite, &src, &dest, my_vect[2]/* angle */, NULL, SDL_FLIP_NONE);
     }
-}
+};
+int Snake::get_direction(){
+    return snake_direction;
+};
+void Snake::set_direction(int direction){
+    snake_direction = direction;
+};
+

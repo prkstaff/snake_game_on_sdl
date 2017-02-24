@@ -35,6 +35,5 @@ InputHandler::InputHandler(){
     go_down  = new GoDown();
     go_right  = new GoRight();
     go_left  = new GoLeft();
-    pause  = new Pause();
 };
 

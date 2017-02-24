@@ -14,7 +14,6 @@ class InputHandler{
         Command* go_down;
         Command* go_left;
         Command* go_right;
-        Command* pause;
 };
 #endif /* ifndef _INPUTHANDLER_
 class InputHandler{

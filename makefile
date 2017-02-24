@@ -18,7 +18,7 @@ TextDraw.o:
 Snake.o:
 	clang++ -std=c++11 -stdlib=libc++ -c classes/Snake.cpp
 
-Snake.o:
+Sound.o:
 	clang++ -std=c++11 -stdlib=libc++ -c classes/Sound.cpp
 
 Command.o:

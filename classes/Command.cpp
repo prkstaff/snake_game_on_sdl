@@ -1,18 +1,16 @@
 #include "Command.h"
 #include <iostream>
+#include "Game.h"
 
-void GoUp::execute(){
-    printf("Pressed up");
+void GoUp::execute(Snake* snake){
+    snake->set_direction(UP);
 }
-void GoDown::execute(){
-    printf("Pressed Down");
+void GoDown::execute(Snake* snake){
+    snake->set_direction(DOWN);
 }
-void GoLeft::execute(){
-    printf("Pressed Left");
+void GoLeft::execute(Snake* snake){
+    snake->set_direction(LEFT);
 }
-void GoRight::execute(){
-    printf("Pressed Right");
-}
-void Pause::execute(){
-    printf("Pressed Pause");
+void GoRight::execute(Snake* snake){
+    snake->set_direction(RIGHT);
 }
