@@ -9,6 +9,7 @@
 #include <sstream>
 #include <iostream>
 #include "Sound.h"
+#include "Command.h"
 //http://www.lazyfoo.net/SDL_tutorials/lesson11/index.php
 //Install sdl2 sdlt_ttf and sdl2_mixer with brew
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
@@ -233,7 +234,10 @@ void Game::run(){
     //This is the game loop
     if(initSDLScreen()){
         while(game_is_running){
-            input_handler.handle_input(&game_is_running, sdl_event, &direction);
+            Command* command_ = input_handler.handle_input(&game_is_running, sdl_event);
+            if(command_){
+                command_->execute();
+            }
             //processInput();
             updateGame();
             SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);

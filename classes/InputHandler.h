@@ -3,12 +3,18 @@
 
 #include <SDL2/SDL.h>
 #include <iostream>
+#include "Command.h"
 
 class InputHandler{
     public:
-        void handle_input(bool *game_is_running, SDL_Event sdl_event, int* direction);
+        Command* handle_input(bool *game_is_running, SDL_Event sdl_event);
+        InputHandler();
     private:
-        //handle commands
+        Command* go_up;
+        Command* go_down;
+        Command* go_left;
+        Command* go_right;
+        Command* pause;
 };
 #endif /* ifndef _INPUTHANDLER_
 class InputHandler{
