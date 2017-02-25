@@ -133,7 +133,19 @@ void Snake::draw(SDL_Renderer *renderer, int snake_sprite_square_size, SDL_Textu
 int Snake::get_direction(){
     return snake_direction;
 };
+int Snake::get_old_direction(){
+    return snake_old_direction;
+}
+void Snake::set_old_direction(int direction){
+    snake_old_direction = direction;
+}
 void Snake::set_direction(int direction){
+    //dont let snake go inverse direction
+    int old_direction = get_old_direction();
+    if((direction==RIGHT && old_direction==LEFT) || (direction==LEFT && old_direction==RIGHT))direction=old_direction;
+    if((direction==DOWN && old_direction==UP) || (direction==UP && old_direction==DOWN))direction=old_direction;
+    set_old_direction(direction);
     snake_direction = direction;
+
 };
 

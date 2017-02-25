@@ -46,8 +46,6 @@ class Game
         Snake snake;
         InputHandler input_handler;
         bool ate_apple;
-        int direction;
-        int old_direction;
         //SDL_Surface* loadSurface( std::string path);
         bool check_is_snake_position(int x, int y);
         void if_its_empty_move_snake(int x, int y, int direct);

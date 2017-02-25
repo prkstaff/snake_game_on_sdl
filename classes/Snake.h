@@ -9,6 +9,7 @@ class Snake{
     private:
         std::vector <Position>  snakePositions;
         int snake_direction;
+        int snake_old_direction;
     public:
         Snake(int initial_x, int initial_y);
         std::vector <Position> get_positions();
@@ -19,6 +20,8 @@ class Snake{
         void draw(SDL_Renderer *renderer, int snake_sprite_square_size, SDL_Texture *sprite);
         int get_direction();
         void set_direction(int new_direction);
+        int get_old_direction();
+        void set_old_direction(int new_direction);
 };
 #endif /* ifndef _SNAKE_
 class Snake{

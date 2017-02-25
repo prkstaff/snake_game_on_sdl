@@ -117,18 +117,12 @@ void Game::if_its_empty_move_snake(int x, int y, int direct){
             snake.erase_first_position();
         }
         ate_apple = false;
-        //old_direction = snake.get_direction();
         movements_made = movements_made +1;
     }
     //else game over
 }
 void Game::updateGame(){
     Position head = snake.get_positions()[snake.get_positions().size()-1];
-    //
-    //dont let snake go backwards
-    if((snake.get_direction()==RIGHT && old_direction==LEFT) || (snake.get_direction()==LEFT && old_direction==RIGHT))snake.set_direction(old_direction);
-    if((snake.get_direction()==DOWN && old_direction==UP) || (snake.get_direction()==UP && old_direction==DOWN))snake.set_direction(old_direction);
-
     if(snake.get_direction() != DEFAULT){
         if(snake.get_direction() == RIGHT){
                 if_its_empty_move_snake(head.get_x()+1,head.get_y(), RIGHT);
