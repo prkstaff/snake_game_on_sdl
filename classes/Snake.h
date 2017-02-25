@@ -22,6 +22,7 @@ class Snake{
         void set_direction(int new_direction);
         int get_old_direction();
         void set_old_direction(int new_direction);
+        void move_if_empty(Position* apple_position);
 };
 #endif /* ifndef _SNAKE_
 class Snake{

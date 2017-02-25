@@ -14,20 +14,20 @@
 //Install sdl2 sdlt_ttf and sdl2_mixer with brew
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
-Game::Game(int sWidth, int sHeight): SCREEN_WIDTH(sWidth), SCREEN_HEIGHT(sHeight), apple_position(2,2,DOWN), snake(5,2){
-    game_is_running = true;
-    //initial values
-    movements_made = 0;
-    apples_ate = 0;
-    game_score = 0;
-    //
+const int  Game::SCREEN_WIDTH = 19;
+const int Game::SCREEN_HEIGHT = 12;
+const int Game::SCORE_BOARD_WIDTH = 4;
+int Game::game_score = 0;
+int Game::apples_ate = 0;
+int Game::movements_made = 0;
+bool Game::game_is_running = true;
+Game::Game():apple_position(2,2,DOWN), snake(5,2){
     //initial snake position
+    //
     Position apple_position(2,2, DOWN);
-    ate_apple =  false;
     snake_sprite_square_size = 60;
     //
     //Score board width
-    score_board_width = 4;
     Snake snake(5,2);
     //initialize snake
 };
@@ -79,61 +79,13 @@ bool Game::initSDLScreen(){
 	return success;
 
 }
-
-
-void Game::if_its_empty_move_snake(int x, int y, int direct){
-    bool is_empty = true;
-
-    //check for snake
-       if(snake.is_snake_position(x, y)){
-           is_empty = false;
-       }
-
-    //check for map borders
-    if(x < 0 || y < 0 || x > SCREEN_WIDTH-score_board_width-1 || y > SCREEN_HEIGHT -1){
-        is_empty = false;
-    }
-
-    //check if is biting the apple
-    if(x == apple_position.get_x() && y == apple_position.get_y()){
-        int new_x;
-        int new_y;
-        do{
-            new_x = rand() % (SCREEN_WIDTH - score_board_width) ;
-            new_y = rand() % SCREEN_HEIGHT ;
-        }while(snake.is_snake_position(new_x,new_y));
-        ate_apple = true;
-        apples_ate = apples_ate +1;
-        //play chomp sound
-        Sound::instance()->play_chomp_sound();
-        apple_position.set_x_y(new_x,new_y);
-        game_score = game_score+10;
-    }
-
-    if(is_empty){
-        Position newPos(x,y, direct);
-        snake.add_position(newPos);
-        if(ate_apple == false){
-            snake.erase_first_position();
-        }
-        ate_apple = false;
-        movements_made = movements_made +1;
-    }
-    //else game over
-}
 void Game::updateGame(){
-    Position head = snake.get_positions()[snake.get_positions().size()-1];
-    if(snake.get_direction() != DEFAULT){
-        if(snake.get_direction() == RIGHT){
-                if_its_empty_move_snake(head.get_x()+1,head.get_y(), RIGHT);
-        }else if(snake.get_direction() == LEFT){
-                if_its_empty_move_snake(head.get_x()-1,head.get_y(), LEFT);
-        }else if(snake.get_direction() == UP){
-                if_its_empty_move_snake(head.get_x(),head.get_y()-1, UP);
-        }else if(snake.get_direction() == DOWN){
-                if_its_empty_move_snake(head.get_x(),head.get_y()+1, DOWN);
-        }
+    Command* command_ = input_handler.handle_input(&game_is_running, sdl_event);
+    if(command_){
+        command_->execute(&snake);
     }
+    snake.move_if_empty(&apple_position);
+
 };
 void Game::drawGame(){
 
@@ -149,7 +101,7 @@ void Game::drawGame(){
     SDL_Rect grass_rect;
     grass_rect.x = 0;
     grass_rect.y = 0;
-    grass_rect.w = SCREEN_WIDTH*snake_sprite_square_size-score_board_width*snake_sprite_square_size;
+    grass_rect.w = SCREEN_WIDTH*snake_sprite_square_size-SCORE_BOARD_WIDTH*snake_sprite_square_size;
     grass_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
     SDL_RenderCopy(renderer, grass_texture, NULL, &grass_rect);
     //
@@ -188,9 +140,9 @@ void Game::drawGame(){
         exit(1);
     }
     SDL_Rect score_rect;
-    score_rect.x = SCREEN_WIDTH*snake_sprite_square_size - score_board_width*snake_sprite_square_size;
+    score_rect.x = SCREEN_WIDTH*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size;
     score_rect.y = 0;
-    score_rect.w = score_board_width*snake_sprite_square_size;
+    score_rect.w = SCORE_BOARD_WIDTH*snake_sprite_square_size;
     score_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
     SDL_RenderCopy(renderer, score_texture, NULL, &score_rect);
     SDL_DestroyTexture(score_texture);
@@ -201,7 +153,7 @@ void Game::drawGame(){
     textmanager.draw_text(renderer, "src/kongtext.ttf", "SNAKENATOR", 5, 10, 24, 300, 35);
 
     //
-    int score_board_x = (SCREEN_WIDTH*snake_sprite_square_size - score_board_width*snake_sprite_square_size) + 20;
+    int score_board_x = (SCREEN_WIDTH*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size) + 20;
     //SCOREBOARD TITLE
     //
     //
@@ -228,10 +180,6 @@ void Game::run(){
     //This is the game loop
     if(initSDLScreen()){
         while(game_is_running){
-            Command* command_ = input_handler.handle_input(&game_is_running, sdl_event);
-            if(command_){
-                command_->execute(&snake);
-            }
             //processInput();
             updateGame();
             SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
@@ -246,4 +194,36 @@ void Game::run(){
     }
 	closeGame();
 };
-
+int Game::get_SCREEN_WIDTH(){
+    return SCREEN_WIDTH;
+};
+int Game::get_SCREEN_HEIGHT(){
+    return SCREEN_HEIGHT;
+};
+int Game::get_apples_ate(){
+    return apples_ate;
+};
+void Game::set_apples_ate(int ates ){
+    apples_ate = ates;
+};
+int Game::get_SCORE_BOARD_WIDTH(){
+    return SCORE_BOARD_WIDTH;
+};
+int Game::get_game_score(){
+    return game_score;
+};
+void Game::set_game_score(int score){
+    game_score = score;
+};
+void Game::set_movements_made(int movements){
+    movements_made = movements;
+};
+void Game::set_game_is_running(bool state){
+    game_is_running = state;
+};
+int Game::get_movements_made(){
+    return movements_made;
+};
+bool Game::get_game_is_running(){
+    return game_is_running;
+};

@@ -1,5 +1,6 @@
 #include "Snake.h"
 #include "Game.h"
+#include "Sound.h"
 
 Snake::Snake(int initial_x, int initial_y){
 
@@ -148,4 +149,70 @@ void Snake::set_direction(int direction){
     snake_direction = direction;
 
 };
+void Snake::move_if_empty(Position* apple_position){
+    Game myGame;
+    int direct = get_direction();
+    //Todo, create eatable, apple object and move this method inside snake class
+    //Create a Eatable class with a virtual ate method.
+    //Each Eatable is stored in a vector of eatable.
+    //Create a Eatable manager class, it will score as you eat and manage the spawn.
+    //Game class check if next snake step is a eatable in the Eatable Manager class
+
+    Position head = get_positions()[get_positions().size()-1];
+    int x = head.get_x();
+    int y = head.get_y();
+    switch(direct){
+        case DOWN:
+         y = y+1;
+        break;
+        case UP:
+         y = y-1;
+        break;
+        case LEFT:
+         x = x-1;
+        break;
+        case RIGHT:
+         x = x+1;
+        break;
+    }
+    bool is_empty = true;
+
+    bool ate_apple = false;
+    //check for snake
+       if(is_snake_position(x, y)){
+           is_empty = false;
+       }
+
+    //check for map borders
+    if(x < 0 || y < 0 || x > myGame.get_SCREEN_WIDTH()-myGame.get_SCORE_BOARD_WIDTH()-1 || y > myGame.get_SCREEN_HEIGHT() -1){
+        is_empty = false;
+    }
+
+    //check if is biting the apple
+    if(x == apple_position->get_x() && y == apple_position->get_y()){
+        int new_x;
+        int new_y;
+        do{
+            new_x = rand() % (myGame.get_SCREEN_WIDTH() - myGame.get_SCORE_BOARD_WIDTH()) ;
+            new_y = rand() % myGame.get_SCREEN_HEIGHT();
+        }while(is_snake_position(new_x,new_y));
+        ate_apple = true;
+        myGame.set_apples_ate(myGame.get_apples_ate() +1);
+        //play chomp sound
+        Sound::instance()->play_chomp_sound();
+        apple_position->set_x_y(new_x,new_y);
+        myGame.set_game_score(myGame.get_game_score()+10);
+    }
+
+    if(is_empty){
+        Position newPos(x,y, direct);
+        add_position(newPos);
+        if(ate_apple == false){
+            erase_first_position();
+        }
+        ate_apple = false;
+        myGame.set_movements_made(myGame.get_movements_made()+1);
+    }
+    //else game over
+}
 

@@ -1,7 +1,7 @@
 #include "classes/Game.h"
 
 int main(){
-    Game myGame(19,12);
+    Game myGame;
     myGame.run();
     return 0;
 }

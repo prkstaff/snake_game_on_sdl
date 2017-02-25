@@ -28,14 +28,14 @@ enum SnakeSprites{
 class Game
 {
     private:
-        const int SCREEN_WIDTH;
-        const int SCREEN_HEIGHT;
-        bool game_is_running;
+        static const int SCREEN_WIDTH;
+        static const int SCREEN_HEIGHT;
+        static const int SCORE_BOARD_WIDTH;
+        static bool game_is_running;
         int snake_sprite_square_size;
-        int score_board_width;
-        int game_score;
-        int apples_ate;
-        int movements_made;
+        static int game_score;
+        static int apples_ate;
+        static int movements_made;
         SDL_Surface *surface;
         SDL_Texture *sprite;
         SDL_Event sdl_event;
@@ -45,18 +45,27 @@ class Game
         Position apple_position;
         Snake snake;
         InputHandler input_handler;
-        bool ate_apple;
         //SDL_Surface* loadSurface( std::string path);
         bool check_is_snake_position(int x, int y);
-        void if_its_empty_move_snake(int x, int y, int direct);
         bool initSDLScreen();
         void processInput();
         void updateGame();
         void drawGame();
         void closeGame();
     public:
-        Game(int sWidth, int sHeight);
+        Game();
         void run();
+        int get_SCREEN_WIDTH();
+        int get_SCREEN_HEIGHT();
+        void set_apples_ate(int ates);
+        int get_apples_ate();
+        int get_SCORE_BOARD_WIDTH();
+        int get_game_score();
+        void set_game_score(int score);
+        void set_game_is_running(bool state);
+        bool get_game_is_running();
+        int get_movements_made();
+        void set_movements_made(int movements);
 };
 
 #endif /* GAME_H */
