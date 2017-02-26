@@ -26,8 +26,8 @@ Command* InputHandler::handle_input(bool *game_is_running, SDL_Event sdl_event){
                                 return go_right;
                                 //*direction = RIGHT;
                             break;
-                            case SDLK_p:
-                                myGame.set_game_state(MAIN_SCREEN);
+                            case SDLK_ESCAPE:
+                                myGame.set_game_state(PAUSED);
                             break;
                             case SDLK_c:
                                 myGame.set_game_state(RUNNING);
