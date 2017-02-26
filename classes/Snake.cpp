@@ -12,7 +12,6 @@ Snake::Snake(int initial_x, int initial_y){
     snakePositions.push_back(initial_tale);
     snakePositions.push_back(initial_body2);
     snakePositions.push_back(initial_head);
-
 }
 std::vector <Position> Snake::get_positions(){
     return snakePositions;

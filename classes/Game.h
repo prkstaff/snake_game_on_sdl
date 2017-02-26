@@ -25,6 +25,11 @@ enum SnakeSprites{
     SNAKE_TAIL,
     APPLE
 };
+enum GameStates{
+    MAIN_SCREEN = 0,
+    PAUSED,
+    RUNNING
+};
 class Game
 {
     private:
@@ -36,6 +41,8 @@ class Game
         static int game_score;
         static int apples_ate;
         static int movements_made;
+        static Uint32 MS_PER_FRAME;//GAME FPS
+        static int GAME_STATE;
         SDL_Surface *surface;
         SDL_Texture *sprite;
         SDL_Event sdl_event;
@@ -50,6 +57,7 @@ class Game
         bool initSDLScreen();
         void processInput();
         void updateGame();
+        void draw_main_screen();
         void drawGame();
         void closeGame();
     public:
@@ -66,6 +74,8 @@ class Game
         bool get_game_is_running();
         int get_movements_made();
         void set_movements_made(int movements);
+        void set_game_state(int state);
+        int get_game_state();
 };
 
 #endif /* GAME_H */

@@ -4,6 +4,7 @@
 #include "Command.h"
 
 Command* InputHandler::handle_input(bool *game_is_running, SDL_Event sdl_event){
+            Game myGame;
             while(SDL_PollEvent( &sdl_event ) != 0){
                 if( sdl_event.type == SDL_QUIT ){
                     *game_is_running = false;
@@ -24,6 +25,12 @@ Command* InputHandler::handle_input(bool *game_is_running, SDL_Event sdl_event){
                             case SDLK_RIGHT:
                                 return go_right;
                                 //*direction = RIGHT;
+                            break;
+                            case SDLK_p:
+                                myGame.set_game_state(MAIN_SCREEN);
+                            break;
+                            case SDLK_c:
+                                myGame.set_game_state(RUNNING);
                             break;
                         }
                 }

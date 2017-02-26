@@ -19,8 +19,10 @@ const int Game::SCREEN_HEIGHT = 12;
 const int Game::SCORE_BOARD_WIDTH = 4;
 int Game::game_score = 0;
 int Game::apples_ate = 0;
+int Game::GAME_STATE = MAIN_SCREEN;
 int Game::movements_made = 0;
 bool Game::game_is_running = true;
+Uint32 Game::MS_PER_FRAME = 1000 / 6; //FPS
 Game::Game():apple_position(2,2,DOWN), snake(5,2){
     //initial snake position
     //
@@ -84,8 +86,13 @@ void Game::updateGame(){
     if(command_){
         command_->execute(&snake);
     }
-    snake.move_if_empty(&apple_position);
+    if(GAME_STATE == RUNNING){
+        snake.move_if_empty(&apple_position);
+    }
 
+};
+void Game::draw_main_screen(){
+    printf(".");
 };
 void Game::drawGame(){
 
@@ -167,6 +174,7 @@ void Game::drawGame(){
 
     //Text Movements Made
     textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Steps: ", movements_made).c_str(), score_board_x, 225, 24, 180, 25);
+    SDL_RenderPresent(renderer);
 };
 void Game::closeGame(){
     SDL_DestroyRenderer(renderer);
@@ -180,15 +188,11 @@ void Game::run(){
     //This is the game loop
     if(initSDLScreen()){
         while(game_is_running){
-            //processInput();
             updateGame();
-            SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
-            //SDL_SetRenderDrawColor(renderer, 0x09, 0x51, 0x18, 0xff);
-            SDL_RenderClear(renderer);
-            drawGame();
-            SDL_RenderPresent(renderer);
-            unsigned int microseconds = 300000;
-            usleep(microseconds);
+            //DRAW
+                if(GAME_STATE == RUNNING)drawGame();
+                if(GAME_STATE == MAIN_SCREEN)draw_main_screen();
+            SDL_Delay(MS_PER_FRAME);
             //User requests quit
         }
     }
@@ -227,3 +231,9 @@ int Game::get_movements_made(){
 bool Game::get_game_is_running(){
     return game_is_running;
 };
+void Game::set_game_state(int state){
+    GAME_STATE = state;
+};
+int Game::get_game_state(){
+    return GAME_STATE;
+}
