@@ -15,14 +15,6 @@
 //Install sdl2 sdlt_ttf and sdl2_mixer with brew
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
-const int Game::SCREEN_HEIGHT = 12;
-const int Game::SCORE_BOARD_WIDTH = 4;
-int Game::game_score = 0;
-int Game::apples_ate = 0;
-int Game::GAME_STATE = MAIN_SCREEN;
-int Game::movements_made = 0;
-bool Game::game_is_running = true;
-Uint32 Game::MS_PER_FRAME = 1000 / 6; //FPS
 Game::Game():apple_position(2,2,DOWN), snake(5,2){
     //initial snake position
     //
@@ -48,7 +40,7 @@ bool Game::initSDLScreen(){
 	}
 	else
 	{
-        SDL_CreateWindowAndRenderer( GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size, SCREEN_HEIGHT*snake_sprite_square_size, SDL_WINDOW_RESIZABLE, &window, &renderer);
+        SDL_CreateWindowAndRenderer( GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size, GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size, SDL_WINDOW_RESIZABLE, &window, &renderer);
                          //Initialize SDL_mixer
         if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
         {
@@ -82,11 +74,11 @@ bool Game::initSDLScreen(){
 
 }
 void Game::updateGame(){
-    Command* command_ = input_handler.handle_input(&game_is_running, sdl_event);
+    Command* command_ = input_handler.handle_input(sdl_event);
     if(command_){
         command_->execute(&snake);
     }
-    if(GAME_STATE == RUNNING){
+    if(GameManager::instance()->get_game_state() == RUNNING){
         snake.move_if_empty(&apple_position);
     }
 
@@ -98,7 +90,7 @@ void Game::draw_main_screen(){
     SDL_Rect rect;
     rect.x = 0;
     rect.y = 0;
-    rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
+    rect.h = GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size;
     rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size;
     SDL_RenderCopy(renderer, main_title_bg, NULL, &rect);
     SDL_DestroyTexture(main_title_bg);
@@ -118,8 +110,8 @@ void Game::drawGame(){
     SDL_Rect grass_rect;
     grass_rect.x = 0;
     grass_rect.y = 0;
-    grass_rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size-SCORE_BOARD_WIDTH*snake_sprite_square_size;
-    grass_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
+    grass_rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size-GameManager::instance()->get_SCORE_BOARD_WIDTH()*snake_sprite_square_size;
+    grass_rect.h = GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size;
     SDL_RenderCopy(renderer, grass_texture, NULL, &grass_rect);
     SDL_DestroyTexture(grass_texture);
     //
@@ -158,10 +150,10 @@ void Game::drawGame(){
         exit(1);
     }
     SDL_Rect score_rect;
-    score_rect.x = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size;
+    score_rect.x = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size - GameManager::instance()->get_SCORE_BOARD_WIDTH()*snake_sprite_square_size;
     score_rect.y = 0;
-    score_rect.w = SCORE_BOARD_WIDTH*snake_sprite_square_size;
-    score_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
+    score_rect.w = GameManager::instance()->get_SCORE_BOARD_WIDTH()*snake_sprite_square_size;
+    score_rect.h = GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size;
     SDL_RenderCopy(renderer, score_texture, NULL, &score_rect);
     SDL_DestroyTexture(score_texture);
 
@@ -171,29 +163,29 @@ void Game::drawGame(){
     textmanager.draw_text(renderer, "src/kongtext.ttf", "SNAKENATOR", 5, 10, 24, 300, 35);
 
     //
-    int score_board_x = (GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size) + 20;
+    int score_board_x = (GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size - GameManager::instance()->get_SCORE_BOARD_WIDTH()*snake_sprite_square_size) + 20;
     //SCOREBOARD TITLE
     //
     //
     textmanager.draw_text(renderer, "src/kongtext.ttf", "Score Board", score_board_x, 10, 24, 180, 25);
 
     //SCOREBOARD APPLES ATE
-    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Apples: ", apples_ate).c_str(), score_board_x, 135, 24, 180, 25);
-
+    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Apples: ", GameManager::instance()->get_apples_ate()).c_str(), score_board_x, 135, 24, 180, 25);
+    //
     //Text  APPLES ATE
-    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Score: ", game_score).c_str(), score_board_x, 180, 24, 180, 25);
+    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Score: ", GameManager::instance()->get_game_score()).c_str(), score_board_x, 180, 24, 180, 25);
 
     //Text Movements Made
-    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Steps: ", movements_made).c_str(), score_board_x, 225, 24, 180, 25);
+    textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Steps: ", GameManager::instance()->get_movements_made()).c_str(), score_board_x, 225, 24, 180, 25);
 
-    if(GAME_STATE == PAUSED){
+    if(GameManager::instance()->get_game_state() == PAUSED){
         SDL_Surface* pause_surface = SDL_LoadBMP("src/pause.bmp");
         SDL_Texture* pause_texture = SDL_CreateTextureFromSurface(renderer, pause_surface);
         SDL_FreeSurface(pause_surface);
 
         SDL_Rect pause_rect;
         pause_rect.x = (GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size)/2 - 594/2;
-        pause_rect.y = (SCREEN_HEIGHT*snake_sprite_square_size)/2 - 367/2;
+        pause_rect.y = (GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size)/2 - 367/2;
         pause_rect.w = 594;
         pause_rect.h = 367;
         SDL_RenderCopy(renderer, pause_texture, NULL, &pause_rect);
@@ -213,50 +205,15 @@ void Game::run(){
     //This is the game loop
     //Scene* main_title_scene = new MainTitleScene();
     if(initSDLScreen()){
-        while(game_is_running){
+        while(GameManager::instance()->get_game_is_running()){
             updateGame();
             //DRAW
-                if(GAME_STATE == RUNNING || GAME_STATE == PAUSED)drawGame();
-                if(GAME_STATE == MAIN_SCREEN)draw_main_screen();
-            SDL_Delay(MS_PER_FRAME);
+                if(GameManager::instance()->get_game_state() == RUNNING || GameManager::instance()->get_game_state() == PAUSED)drawGame();
+                if(GameManager::instance()->get_game_state() == MAIN_SCREEN)draw_main_screen();
+            SDL_Delay(GameManager::instance()->get_ms_per_frame());
             //User requests quit
         }
     }
 	closeGame();
 };
-int Game::get_SCREEN_HEIGHT(){
-    return SCREEN_HEIGHT;
-};
-int Game::get_apples_ate(){
-    return apples_ate;
-};
-void Game::set_apples_ate(int ates ){
-    apples_ate = ates;
-};
-int Game::get_SCORE_BOARD_WIDTH(){
-    return SCORE_BOARD_WIDTH;
-};
-int Game::get_game_score(){
-    return game_score;
-};
-void Game::set_game_score(int score){
-    game_score = score;
-};
-void Game::set_movements_made(int movements){
-    movements_made = movements;
-};
-void Game::set_game_is_running(bool state){
-    game_is_running = state;
-};
-int Game::get_movements_made(){
-    return movements_made;
-};
-bool Game::get_game_is_running(){
-    return game_is_running;
-};
-void Game::set_game_state(int state){
-    GAME_STATE = state;
-};
-int Game::get_game_state(){
-    return GAME_STATE;
-}
+

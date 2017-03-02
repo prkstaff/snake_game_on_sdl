@@ -2,12 +2,12 @@
 #include <SDL2/SDL.h>
 #include "Game.h"
 #include "Command.h"
+#include "GameManager.h"
 
-Command* InputHandler::handle_input(bool *game_is_running, SDL_Event sdl_event){
-            Game myGame;
+Command* InputHandler::handle_input(SDL_Event sdl_event){
             while(SDL_PollEvent( &sdl_event ) != 0){
                 if( sdl_event.type == SDL_QUIT ){
-                    *game_is_running = false;
+                    GameManager::instance()->set_game_is_running(false);
                 }else if(sdl_event.type == SDL_KEYDOWN){
                     switch( sdl_event.key.keysym.sym ){
                             case SDLK_UP:
@@ -27,10 +27,10 @@ Command* InputHandler::handle_input(bool *game_is_running, SDL_Event sdl_event){
                                 //*direction = RIGHT;
                             break;
                             case SDLK_ESCAPE:
-                                myGame.set_game_state(PAUSED);
+                                GameManager::instance()->set_game_state(PAUSED);
                             break;
                             case SDLK_c:
-                                myGame.set_game_state(RUNNING);
+                                GameManager::instance()->set_game_state(RUNNING);
                             break;
                         }
                 }

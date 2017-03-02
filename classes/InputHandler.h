@@ -7,7 +7,7 @@
 
 class InputHandler{
     public:
-        Command* handle_input(bool *game_is_running, SDL_Event sdl_event);
+        Command* handle_input(SDL_Event sdl_event);
         InputHandler();
     private:
         Command* go_up;

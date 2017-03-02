@@ -180,10 +180,8 @@ void Snake::move_if_empty(Position* apple_position){
        if(is_snake_position(x, y)){
            is_empty = false;
        }
-    Game myGame;
-
     //check for map borders
-    if(x < 0 || y < 0 || x > GameManager::instance()->get_SCREEN_WIDTH()-myGame.get_SCORE_BOARD_WIDTH()-1 || y > myGame.get_SCREEN_HEIGHT() -1){
+    if(x < 0 || y < 0 || x > GameManager::instance()->get_SCREEN_WIDTH()-GameManager::instance()->get_SCORE_BOARD_WIDTH()-1 || y > GameManager::instance()->get_SCREEN_HEIGHT() -1){
         is_empty = false;
     }
 
@@ -192,15 +190,15 @@ void Snake::move_if_empty(Position* apple_position){
         int new_x;
         int new_y;
         do{
-            new_x = rand() % (GameManager::instance()->get_SCREEN_WIDTH() - myGame.get_SCORE_BOARD_WIDTH()) ;
-            new_y = rand() % myGame.get_SCREEN_HEIGHT();
+            new_x = rand() % (GameManager::instance()->get_SCREEN_WIDTH() - GameManager::instance()->get_SCORE_BOARD_WIDTH()) ;
+            new_y = rand() % GameManager::instance()->get_SCREEN_HEIGHT();
         }while(is_snake_position(new_x,new_y));
         ate_apple = true;
-        myGame.set_apples_ate(myGame.get_apples_ate() +1);
+        GameManager::instance()->set_apples_ate(GameManager::instance()->get_apples_ate() +1);
         //play chomp sound
         Sound::instance()->play_chomp_sound();
         apple_position->set_x_y(new_x,new_y);
-        myGame.set_game_score(myGame.get_game_score()+10);
+        GameManager::instance()->set_game_score(GameManager::instance()->get_game_score()+10);
     }
 
     if(is_empty){
@@ -210,7 +208,7 @@ void Snake::move_if_empty(Position* apple_position){
             erase_first_position();
         }
         ate_apple = false;
-        myGame.set_movements_made(myGame.get_movements_made()+1);
+        GameManager::instance()->set_movements_made(GameManager::instance()->get_movements_made()+1);
     }
     //else game over
 }

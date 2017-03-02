@@ -34,15 +34,7 @@ enum GameStates{
 class Game
 {
     private:
-        static const int SCREEN_HEIGHT;
-        static const int SCORE_BOARD_WIDTH;
-        static bool game_is_running;
         int snake_sprite_square_size;
-        static int game_score;
-        static int apples_ate;
-        static int movements_made;
-        static Uint32 MS_PER_FRAME;//GAME FPS
-        static int GAME_STATE;
         SDL_Surface *surface;
         SDL_Texture *sprite;
         SDL_Event sdl_event;
@@ -63,18 +55,6 @@ class Game
     public:
         Game();
         void run();
-        int get_SCREEN_HEIGHT();
-        void set_apples_ate(int ates);
-        int get_apples_ate();
-        int get_SCORE_BOARD_WIDTH();
-        int get_game_score();
-        void set_game_score(int score);
-        void set_game_is_running(bool state);
-        bool get_game_is_running();
-        int get_movements_made();
-        void set_movements_made(int movements);
-        void set_game_state(int state);
-        int get_game_state();
 };
 
 #endif /* GAME_H */
