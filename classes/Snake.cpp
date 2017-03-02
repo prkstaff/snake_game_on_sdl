@@ -1,9 +1,9 @@
 #include "Snake.h"
 #include "Game.h"
 #include "Sound.h"
+#include "GameManager.h"
 
 Snake::Snake(int initial_x, int initial_y){
-
     //initial Snake
     snake_direction = DOWN;
     Position initial_tale(initial_x,initial_y,DOWN);
@@ -149,7 +149,6 @@ void Snake::set_direction(int direction){
 
 };
 void Snake::move_if_empty(Position* apple_position){
-    Game myGame;
     int direct = get_direction();
     //Todo, create eatable, apple object and move this method inside snake class
     //Create a Eatable class with a virtual ate method.
@@ -181,9 +180,10 @@ void Snake::move_if_empty(Position* apple_position){
        if(is_snake_position(x, y)){
            is_empty = false;
        }
+    Game myGame;
 
     //check for map borders
-    if(x < 0 || y < 0 || x > myGame.get_SCREEN_WIDTH()-myGame.get_SCORE_BOARD_WIDTH()-1 || y > myGame.get_SCREEN_HEIGHT() -1){
+    if(x < 0 || y < 0 || x > GameManager::instance()->get_SCREEN_WIDTH()-myGame.get_SCORE_BOARD_WIDTH()-1 || y > myGame.get_SCREEN_HEIGHT() -1){
         is_empty = false;
     }
 
@@ -192,7 +192,7 @@ void Snake::move_if_empty(Position* apple_position){
         int new_x;
         int new_y;
         do{
-            new_x = rand() % (myGame.get_SCREEN_WIDTH() - myGame.get_SCORE_BOARD_WIDTH()) ;
+            new_x = rand() % (GameManager::instance()->get_SCREEN_WIDTH() - myGame.get_SCORE_BOARD_WIDTH()) ;
             new_y = rand() % myGame.get_SCREEN_HEIGHT();
         }while(is_snake_position(new_x,new_y));
         ate_apple = true;

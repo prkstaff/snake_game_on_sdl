@@ -10,11 +10,11 @@
 #include <iostream>
 #include "Sound.h"
 #include "Command.h"
+//#include "Scene.cpp"
 //http://www.lazyfoo.net/SDL_tutorials/lesson11/index.php
 //Install sdl2 sdlt_ttf and sdl2_mixer with brew
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
-const int  Game::SCREEN_WIDTH = 19;
 const int Game::SCREEN_HEIGHT = 12;
 const int Game::SCORE_BOARD_WIDTH = 4;
 int Game::game_score = 0;
@@ -48,7 +48,7 @@ bool Game::initSDLScreen(){
 	}
 	else
 	{
-        SDL_CreateWindowAndRenderer( SCREEN_WIDTH*snake_sprite_square_size, SCREEN_HEIGHT*snake_sprite_square_size, SDL_WINDOW_RESIZABLE, &window, &renderer);
+        SDL_CreateWindowAndRenderer( GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size, SCREEN_HEIGHT*snake_sprite_square_size, SDL_WINDOW_RESIZABLE, &window, &renderer);
                          //Initialize SDL_mixer
         if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
         {
@@ -63,7 +63,7 @@ bool Game::initSDLScreen(){
         else
         {
             //Get window surface
-           surface = SDL_LoadBMP("/Users/renato/projectspace/snakegame/src/snake_apple_90x90x450.bmp");
+           surface = SDL_LoadBMP("src/snake_apple_90x90x450.bmp");
            SDL_SetColorKey(surface, SDL_TRUE, 0xFFFFFF);
             if(surface == NULL){
                 printf( "BMP could not Loaded! SDL_Error: %s\n", SDL_GetError() );
@@ -92,14 +92,14 @@ void Game::updateGame(){
 
 };
 void Game::draw_main_screen(){
-    SDL_Surface* main_title_bg_surface = SDL_LoadBMP("/Users/renato/projectspace/snakegame/src/main_intro.bmp");
+    SDL_Surface* main_title_bg_surface = SDL_LoadBMP("src/main_intro.bmp");
     SDL_Texture* main_title_bg= SDL_CreateTextureFromSurface(renderer, main_title_bg_surface);
     SDL_FreeSurface(main_title_bg_surface);
     SDL_Rect rect;
     rect.x = 0;
     rect.y = 0;
     rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
-    rect.w = SCREEN_WIDTH*snake_sprite_square_size;
+    rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size;
     SDL_RenderCopy(renderer, main_title_bg, NULL, &rect);
     SDL_DestroyTexture(main_title_bg);
     SDL_RenderPresent(renderer);
@@ -118,7 +118,7 @@ void Game::drawGame(){
     SDL_Rect grass_rect;
     grass_rect.x = 0;
     grass_rect.y = 0;
-    grass_rect.w = SCREEN_WIDTH*snake_sprite_square_size-SCORE_BOARD_WIDTH*snake_sprite_square_size;
+    grass_rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size-SCORE_BOARD_WIDTH*snake_sprite_square_size;
     grass_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
     SDL_RenderCopy(renderer, grass_texture, NULL, &grass_rect);
     SDL_DestroyTexture(grass_texture);
@@ -158,7 +158,7 @@ void Game::drawGame(){
         exit(1);
     }
     SDL_Rect score_rect;
-    score_rect.x = SCREEN_WIDTH*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size;
+    score_rect.x = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size;
     score_rect.y = 0;
     score_rect.w = SCORE_BOARD_WIDTH*snake_sprite_square_size;
     score_rect.h = SCREEN_HEIGHT*snake_sprite_square_size;
@@ -171,7 +171,7 @@ void Game::drawGame(){
     textmanager.draw_text(renderer, "src/kongtext.ttf", "SNAKENATOR", 5, 10, 24, 300, 35);
 
     //
-    int score_board_x = (SCREEN_WIDTH*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size) + 20;
+    int score_board_x = (GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size - SCORE_BOARD_WIDTH*snake_sprite_square_size) + 20;
     //SCOREBOARD TITLE
     //
     //
@@ -187,12 +187,12 @@ void Game::drawGame(){
     textmanager.draw_text(renderer, "src/kongtext.ttf", textmanager.string_int_concatenation("Steps: ", movements_made).c_str(), score_board_x, 225, 24, 180, 25);
 
     if(GAME_STATE == PAUSED){
-        SDL_Surface* pause_surface = SDL_LoadBMP("/Users/renato/projectspace/snakegame/src/pause.bmp");
+        SDL_Surface* pause_surface = SDL_LoadBMP("src/pause.bmp");
         SDL_Texture* pause_texture = SDL_CreateTextureFromSurface(renderer, pause_surface);
         SDL_FreeSurface(pause_surface);
 
         SDL_Rect pause_rect;
-        pause_rect.x = (SCREEN_WIDTH*snake_sprite_square_size)/2 - 594/2;
+        pause_rect.x = (GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size)/2 - 594/2;
         pause_rect.y = (SCREEN_HEIGHT*snake_sprite_square_size)/2 - 367/2;
         pause_rect.w = 594;
         pause_rect.h = 367;
@@ -211,6 +211,7 @@ void Game::closeGame(){
 }
 void Game::run(){
     //This is the game loop
+    //Scene* main_title_scene = new MainTitleScene();
     if(initSDLScreen()){
         while(game_is_running){
             updateGame();
@@ -222,9 +223,6 @@ void Game::run(){
         }
     }
 	closeGame();
-};
-int Game::get_SCREEN_WIDTH(){
-    return SCREEN_WIDTH;
 };
 int Game::get_SCREEN_HEIGHT(){
     return SCREEN_HEIGHT;

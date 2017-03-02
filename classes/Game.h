@@ -8,6 +8,7 @@
 #include "InputHandler.h"
 #include <vector>
 #include "Snake.h"
+#include "GameManager.h"
 
 //26m https://www.youtube.com/watch?v=nK_sT12h22s&list=PLt1n3PgXIOdmpmI_0PTOad7W0MlyAbHod&index=2
 //
@@ -33,7 +34,6 @@ enum GameStates{
 class Game
 {
     private:
-        static const int SCREEN_WIDTH;
         static const int SCREEN_HEIGHT;
         static const int SCORE_BOARD_WIDTH;
         static bool game_is_running;
@@ -63,7 +63,6 @@ class Game
     public:
         Game();
         void run();
-        int get_SCREEN_WIDTH();
         int get_SCREEN_HEIGHT();
         void set_apples_ate(int ates);
         int get_apples_ate();
