@@ -1,38 +1,19 @@
-all: snake
+CSTD=-std=c++11 -stdlib=libc++
+LIBS=classes/
 
-snake: main.o Game.o Position.o TextDraw.o Snake.o Sound.o Command.o InputHandler.o Scene.o GameManager.o
-	clang++ -std=c++11 -stdlib=libc++ main.o Game.o  Position.o TextDraw.o Snake.o Sound.o Command.o InputHandler.o Scene.o GameManager.o -o snakegame -I/usr/local/include -L/usr/local/lib -lSDL2 -lSDL2_ttf -lSDL2_mixer
+all: snakegame
 
-main.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c main.cpp
+snakegame: libraries
+	clang++ $(CSTD) main.cpp libraries/*.o -o snakegame -I/usr/local/include -L/usr/local/lib -lSDL2 -lSDL2_ttf -lSDL2_mixer
 
-Game.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/Game.cpp
-
-Position.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/Position.cpp
-
-TextDraw.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/TextDraw.cpp
-
-Snake.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/Snake.cpp
-
-Sound.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/Sound.cpp
-
-Command.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/Command.cpp
-
-InputHandler.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/InputHandler.cpp
-
-Scene.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/Scene.cpp
-
-GameManager.o:
-	clang++ -I/usr/local/include -std=c++11 -stdlib=libc++ -c classes/GameManager.cpp
-
+libraries:
+	mkdir libraries/; exit 0
+	for dir in $(LIBS); do \
+		cd $$dir; \
+		clang++ -I/usr/local/include $(CSTD) -c *.cpp; \
+		mv *.o  ../libraries; \
+		cd -; \
+	done;
 
 clean:
-	rm *.o snakegame
+	rm -rf libraries/  snakegame
