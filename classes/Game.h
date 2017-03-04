@@ -34,7 +34,6 @@ enum GameStates{
 class Game
 {
     private:
-        int snake_sprite_square_size;
         SDL_Surface *surface;
         SDL_Texture *sprite;
         SDL_Event sdl_event;

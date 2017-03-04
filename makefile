@@ -2,6 +2,8 @@ CSTD=-std=c++11 -stdlib=libc++
 LIBS=classes/
 
 all: snakegame
+debug: CSTD += -g
+debug: snakegame
 
 snakegame: libraries
 	clang++ $(CSTD) main.cpp libraries/*.o -o snakegame -I/usr/local/include -L/usr/local/lib -lSDL2 -lSDL2_ttf -lSDL2_mixer

@@ -16,6 +16,8 @@ class GameManager{
         static Uint32 MS_PER_FRAME;
         static int SCREEN_WIDTH;
         static int SCREEN_HEIGHT;
+        static int snake_sprite_square_size;
+        static int current_animation_frame;
         ~GameManager();
     public:
         static GameManager* instance();
@@ -36,6 +38,12 @@ class GameManager{
         void set_game_state(int);
         int get_game_state();
         int get_ms_per_frame();
+        int get_snake_sprite_square_size();
+        void set_snake_sprite_square_size(int);
+        int get_game_sprite_width();
+        int get_game_sprite_height();
+        void update_animation_frame();
+        int get_animation_frame();
 };
 #endif /* ifndef _GAMEMANAGER_
 class GameManager{

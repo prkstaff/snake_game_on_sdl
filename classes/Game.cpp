@@ -10,6 +10,8 @@
 #include <iostream>
 #include "Sound.h"
 #include "Command.h"
+#include "Scene.h"
+#include "Sprite.h"
 //#include "Scene.cpp"
 //http://www.lazyfoo.net/SDL_tutorials/lesson11/index.php
 //Install sdl2 sdlt_ttf and sdl2_mixer with brew
@@ -19,13 +21,13 @@ Game::Game():apple_position(2,2,DOWN), snake(5,2){
     //initial snake position
     //
     Position apple_position(2,2, DOWN);
-    snake_sprite_square_size = 60;
     //
     //Score board width
     Snake snake(5,2);
     //initialize snake
 };
 bool Game::initSDLScreen(){
+    int snake_sprite_square_size = GameManager::instance()->get_snake_sprite_square_size();
     bool success = true;
     //Init SDL TTF API
     if(TTF_Init()==-1) {
@@ -83,21 +85,9 @@ void Game::updateGame(){
     }
 
 };
-void Game::draw_main_screen(){
-    SDL_Surface* main_title_bg_surface = SDL_LoadBMP("src/main_intro.bmp");
-    SDL_Texture* main_title_bg= SDL_CreateTextureFromSurface(renderer, main_title_bg_surface);
-    SDL_FreeSurface(main_title_bg_surface);
-    SDL_Rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.h = GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size;
-    rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size;
-    SDL_RenderCopy(renderer, main_title_bg, NULL, &rect);
-    SDL_DestroyTexture(main_title_bg);
-    SDL_RenderPresent(renderer);
-};
 void Game::drawGame(){
 
+    int snake_sprite_square_size = GameManager::instance()->get_snake_sprite_square_size();
 // Draw the grass
     SDL_Surface *grass_surface = SDL_LoadBMP("src/grass.bmp");
     SDL_Texture *grass_texture = SDL_CreateTextureFromSurface(renderer, grass_surface);
@@ -118,17 +108,10 @@ void Game::drawGame(){
     // Todo, create apple class with a draw method and refactor below
     //
 // Draw Apple
-    SDL_Rect apple_rect;
-    apple_rect.x = 4*90;
-    apple_rect.y = 0;
-    apple_rect.w = 90;
-    apple_rect.h = 90;
-    SDL_Rect apple_rect_dest;
-    apple_rect_dest.x = apple_position.get_x()*snake_sprite_square_size;
-    apple_rect_dest.y = apple_position.get_y()*snake_sprite_square_size;
-    apple_rect_dest.w = snake_sprite_square_size;
-    apple_rect_dest.h = snake_sprite_square_size;
-    SDL_RenderCopyEx(renderer, sprites, &apple_rect, &apple_rect_dest, 0/* angle */, NULL, SDL_FLIP_NONE);
+//
+    Sprite sApple("src/sprites/badapple", renderer);
+    sApple.draw_animated(apple_position.get_x(), apple_position.get_y());
+
     //
     // TODO, create draw method in snake class and refactor below
     //
@@ -203,14 +186,15 @@ void Game::closeGame(){
 }
 void Game::run(){
     //This is the game loop
-    //Scene* main_title_scene = new MainTitleScene();
+    MainTitleScene main_title_scene;
     if(initSDLScreen()){
         while(GameManager::instance()->get_game_is_running()){
             updateGame();
             //DRAW
                 if(GameManager::instance()->get_game_state() == RUNNING || GameManager::instance()->get_game_state() == PAUSED)drawGame();
-                if(GameManager::instance()->get_game_state() == MAIN_SCREEN)draw_main_screen();
-            SDL_Delay(GameManager::instance()->get_ms_per_frame());
+                if(GameManager::instance()->get_game_state() == MAIN_SCREEN)main_title_scene.draw(renderer);
+                SDL_Delay(GameManager::instance()->get_ms_per_frame());
+                GameManager::instance()->update_animation_frame();
             //User requests quit
         }
     }
