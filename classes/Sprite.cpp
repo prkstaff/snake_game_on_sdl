@@ -16,6 +16,7 @@ Sprite::Sprite(const char* file, SDL_Renderer* renderer){
     std::string bmp_file(file);
     bmp_file.append(".bmp");
     SDL_Surface* sprite_surface  = SDL_LoadBMP(bmp_file.c_str());
+    SDL_SetColorKey(sprite_surface, SDL_TRUE, 0xFF0094);
     sprite_texture = SDL_CreateTextureFromSurface(renderer, sprite_surface);
     SDL_FreeSurface(sprite_surface);
     sprite_renderer = renderer;

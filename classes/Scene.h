@@ -1,17 +1,31 @@
 #ifndef _SCENE__
 #define _SCENE__
 #include <SDL2/SDL.h>
-  class Scene{
-    private:
+class Scene{
+    protected:
+        SDL_Renderer* renderer;
     public:
-        virtual void draw(SDL_Renderer*) = 0;
+        virtual void draw() = 0;
         virtual ~Scene();
 };
 class MainTitleScene: public Scene{
+    private:
+        SDL_Texture* main_title_bg_texture = 0;
     public:
-        void draw(SDL_Renderer* renderer);
+        virtual void draw();
+        MainTitleScene(SDL_Renderer*);
         ~MainTitleScene();
 };
+class Level1Scene: public Scene{
+    private:
+        SDL_Texture* grass_texture;
+        bool assigned = false;
+    public:
+        virtual void draw();
+        Level1Scene(SDL_Renderer*);
+        ~Level1Scene();
+};
+
 
 #endif
 /* ifndef _SCENE__

@@ -9,6 +9,7 @@
 #include <vector>
 #include "Snake.h"
 #include "GameManager.h"
+#include "Scene.h"
 
 //26m https://www.youtube.com/watch?v=nK_sT12h22s&list=PLt1n3PgXIOdmpmI_0PTOad7W0MlyAbHod&index=2
 //
@@ -35,6 +36,7 @@ class Game
 {
     private:
         SDL_Surface *surface;
+        Scene* level_one = 0;
         SDL_Texture *sprite;
         SDL_Event sdl_event;
         SDL_Window *window;

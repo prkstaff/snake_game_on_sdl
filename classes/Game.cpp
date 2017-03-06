@@ -10,7 +10,6 @@
 #include <iostream>
 #include "Sound.h"
 #include "Command.h"
-#include "Scene.h"
 #include "Sprite.h"
 //#include "Scene.cpp"
 //http://www.lazyfoo.net/SDL_tutorials/lesson11/index.php
@@ -89,24 +88,8 @@ void Game::drawGame(){
 
     int snake_sprite_square_size = GameManager::instance()->get_snake_sprite_square_size();
 // Draw the grass
-    SDL_Surface *grass_surface = SDL_LoadBMP("src/grass.bmp");
-    SDL_Texture *grass_texture = SDL_CreateTextureFromSurface(renderer, grass_surface);
-    if (grass_texture == NULL) {
-        fprintf(stderr, "CreateTextureFromSurface failed: %s\n", SDL_GetError());
-        exit(1);
-    }
-    SDL_FreeSurface(grass_surface);
-    grass_surface = NULL;
-    SDL_Rect grass_rect;
-    grass_rect.x = 0;
-    grass_rect.y = 0;
-    grass_rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size-GameManager::instance()->get_SCORE_BOARD_WIDTH()*snake_sprite_square_size;
-    grass_rect.h = GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size;
-    SDL_RenderCopy(renderer, grass_texture, NULL, &grass_rect);
-    SDL_DestroyTexture(grass_texture);
-    //
-    // Todo, create apple class with a draw method and refactor below
-    //
+   if(level_one == 0)level_one = new Level1Scene(renderer);
+    level_one->draw();
 // Draw Apple
 //
     Sprite sApple("src/sprites/badapple", renderer);
@@ -122,7 +105,7 @@ void Game::drawGame(){
 //Draw Score Board
     //score_board.draw_score_board(render);
     SDL_Surface *score_surface = SDL_CreateRGBSurface(0, 400,400, 32, 0,0,0,0);
-    if (surface == NULL) {
+    if (score_surface == NULL) {
         SDL_Log("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
         exit(1);
     }
@@ -139,6 +122,7 @@ void Game::drawGame(){
     score_rect.h = GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size;
     SDL_RenderCopy(renderer, score_texture, NULL, &score_rect);
     SDL_DestroyTexture(score_texture);
+    score_texture = nullptr;
 
 //Draw scoreboard texts
     TextDraw textmanager;
@@ -163,6 +147,10 @@ void Game::drawGame(){
 
     if(GameManager::instance()->get_game_state() == PAUSED){
         SDL_Surface* pause_surface = SDL_LoadBMP("src/pause.bmp");
+        if(pause_surface == NULL){
+                printf( "BMP could not Loaded! SDL_Error: %s\n", SDL_GetError() );
+        }
+
         SDL_Texture* pause_texture = SDL_CreateTextureFromSurface(renderer, pause_surface);
         SDL_FreeSurface(pause_surface);
 
@@ -173,10 +161,12 @@ void Game::drawGame(){
         pause_rect.h = 367;
         SDL_RenderCopy(renderer, pause_texture, NULL, &pause_rect);
         SDL_DestroyTexture(pause_texture);
+        pause_texture = nullptr;
     };
     SDL_RenderPresent(renderer);
 };
 void Game::closeGame(){
+    delete(level_one);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow( window );
     window = NULL;
@@ -186,16 +176,16 @@ void Game::closeGame(){
 }
 void Game::run(){
     //This is the game loop
-    MainTitleScene main_title_scene;
     if(initSDLScreen()){
+        MainTitleScene main_title_scene(renderer);
         while(GameManager::instance()->get_game_is_running()){
             updateGame();
+            SDL_RenderClear(renderer);
             //DRAW
                 if(GameManager::instance()->get_game_state() == RUNNING || GameManager::instance()->get_game_state() == PAUSED)drawGame();
-                if(GameManager::instance()->get_game_state() == MAIN_SCREEN)main_title_scene.draw(renderer);
+                if(GameManager::instance()->get_game_state() == MAIN_SCREEN)main_title_scene.draw();
                 SDL_Delay(GameManager::instance()->get_ms_per_frame());
                 GameManager::instance()->update_animation_frame();
-            //User requests quit
         }
     }
 	closeGame();
