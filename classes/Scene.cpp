@@ -43,9 +43,9 @@ Level1Scene::Level1Scene(SDL_Renderer* therenderer){
     }
     SDL_FreeSurface(grass_surface);
     grass_surface = nullptr;
-    assigned = true;
 };
 void Level1Scene::draw(){
+    printf("Ta caindo i");
     SDL_Rect grass_rect;
     grass_rect.x = 0;
     grass_rect.y = 0;
@@ -53,6 +53,7 @@ void Level1Scene::draw(){
     grass_rect.w = GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size-GameManager::instance()->get_SCORE_BOARD_WIDTH()*snake_sprite_square_size;
     grass_rect.h = GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size;
     SDL_RenderCopy(renderer, grass_texture, NULL, &grass_rect);
+    //SDL_RenderPresent(renderer);
 }
 Level1Scene::~Level1Scene(){
     SDL_DestroyTexture(grass_texture);

@@ -19,7 +19,6 @@ class MainTitleScene: public Scene{
 class Level1Scene: public Scene{
     private:
         SDL_Texture* grass_texture;
-        bool assigned = false;
     public:
         virtual void draw();
         Level1Scene(SDL_Renderer*);

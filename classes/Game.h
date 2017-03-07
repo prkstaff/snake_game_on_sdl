@@ -10,6 +10,8 @@
 #include "Snake.h"
 #include "GameManager.h"
 #include "Scene.h"
+#include "Sprite.h"
+#include "SceneManager.h"
 
 //26m https://www.youtube.com/watch?v=nK_sT12h22s&list=PLt1n3PgXIOdmpmI_0PTOad7W0MlyAbHod&index=2
 //
@@ -42,8 +44,10 @@ class Game
         SDL_Window *window;
         SDL_Renderer *renderer;
         SDL_Texture *sprites;
+        Sprite* sApple;
         Position apple_position;
         Snake snake;
+        SceneManager* scene_manager;
         InputHandler input_handler;
         //SDL_Surface* loadSurface( std::string path);
         bool check_is_snake_position(int x, int y);

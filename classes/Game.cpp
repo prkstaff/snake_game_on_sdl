@@ -10,7 +10,6 @@
 #include <iostream>
 #include "Sound.h"
 #include "Command.h"
-#include "Sprite.h"
 //#include "Scene.cpp"
 //http://www.lazyfoo.net/SDL_tutorials/lesson11/index.php
 //Install sdl2 sdlt_ttf and sdl2_mixer with brew
@@ -20,6 +19,7 @@ Game::Game():apple_position(2,2,DOWN), snake(5,2){
     //initial snake position
     //
     Position apple_position(2,2, DOWN);
+    sApple = NULL;
     //
     //Score board width
     Snake snake(5,2);
@@ -92,8 +92,10 @@ void Game::drawGame(){
     level_one->draw();
 // Draw Apple
 //
-    Sprite sApple("src/sprites/badapple", renderer);
-    sApple.draw_animated(apple_position.get_x(), apple_position.get_y());
+    if(sApple == NULL){
+        sApple = new Sprite("src/sprites/badapple", renderer);
+    }
+    sApple->draw_animated(apple_position.get_x(), apple_position.get_y());
 
     //
     // TODO, create draw method in snake class and refactor below
@@ -167,6 +169,8 @@ void Game::drawGame(){
 };
 void Game::closeGame(){
     delete(level_one);
+    delete(sApple);
+    delete(scene_manager);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow( window );
     window = NULL;
@@ -177,14 +181,18 @@ void Game::closeGame(){
 void Game::run(){
     //This is the game loop
     if(initSDLScreen()){
+        scene_manager = new SceneManager(renderer);
         MainTitleScene main_title_scene(renderer);
         while(GameManager::instance()->get_game_is_running()){
             updateGame();
             SDL_RenderClear(renderer);
             //DRAW
-                if(GameManager::instance()->get_game_state() == RUNNING || GameManager::instance()->get_game_state() == PAUSED)drawGame();
+                if(GameManager::instance()->get_game_state() == RUNNING || GameManager::instance()->get_game_state() == PAUSED){
+                    scene_manager->draw();
+                    //drawGame();
+                }
                 if(GameManager::instance()->get_game_state() == MAIN_SCREEN)main_title_scene.draw();
-                SDL_Delay(GameManager::instance()->get_ms_per_frame());
+                SDL_Delay(GameManager::instance()->get_ms_per_frame()*10);
                 GameManager::instance()->update_animation_frame();
         }
     }
