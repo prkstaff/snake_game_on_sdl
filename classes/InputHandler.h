@@ -7,9 +7,10 @@
 
 class InputHandler{
     public:
-        Command* handle_input(SDL_Event sdl_event);
+        Command* handle_input();
         InputHandler();
     private:
+        SDL_Event sdl_event;
         Command* go_up;
         Command* go_down;
         Command* go_left;

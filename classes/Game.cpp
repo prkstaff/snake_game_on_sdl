@@ -15,15 +15,7 @@
 //Install sdl2 sdlt_ttf and sdl2_mixer with brew
 //optimize screensurface http://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php
 //Set transparent bpm color key https://gist.github.com/dghost/87274204fc3fe744214c
-Game::Game():apple_position(2,2,DOWN), snake(5,2){
-    //initial snake position
-    //
-    Position apple_position(2,2, DOWN);
-    sApple = NULL;
-    //
-    //Score board width
-    Snake snake(5,2);
-    //initialize snake
+Game::Game(){
 };
 bool Game::initSDLScreen(){
     int snake_sprite_square_size = GameManager::instance()->get_snake_sprite_square_size();
@@ -53,55 +45,13 @@ bool Game::initSDLScreen(){
             printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
             success = false;
         }
-        else
-        {
-            //Get window surface
-           surface = SDL_LoadBMP("src/snake_apple_90x90x450.bmp");
-           SDL_SetColorKey(surface, SDL_TRUE, 0xFFFFFF);
-            if(surface == NULL){
-                printf( "BMP could not Loaded! SDL_Error: %s\n", SDL_GetError() );
-            }else{
-                sprites = SDL_CreateTextureFromSurface(renderer, surface);
-                if(sprites == NULL){
-                    printf( "sprite could not be created! SDL_Error: %s\n", SDL_GetError() );
-                }else{
-                    SDL_FreeSurface(surface);
-                    //Create window
-                }
-            }
-        }
 	}
 	return success;
 
 }
-void Game::updateGame(){
-    Command* command_ = input_handler.handle_input(sdl_event);
-    if(command_){
-        command_->execute(&snake);
-    }
-    if(GameManager::instance()->get_game_state() == RUNNING){
-        snake.move_if_empty(&apple_position);
-    }
-
-};
 void Game::drawGame(){
 
     int snake_sprite_square_size = GameManager::instance()->get_snake_sprite_square_size();
-// Draw the grass
-   if(level_one == 0)level_one = new Level1Scene(renderer);
-    level_one->draw();
-// Draw Apple
-//
-    if(sApple == NULL){
-        sApple = new Sprite("src/sprites/badapple", renderer);
-    }
-    sApple->draw_animated(apple_position.get_x(), apple_position.get_y());
-
-    //
-    // TODO, create draw method in snake class and refactor below
-    //
-// Draw Snake
-    snake.draw(renderer, snake_sprite_square_size, sprites);
     // TODO, create ScoreBoard class with draw mathod and refactor below
     //
 //Draw Score Board
@@ -169,7 +119,6 @@ void Game::drawGame(){
 };
 void Game::closeGame(){
     delete(level_one);
-    delete(sApple);
     delete(scene_manager);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow( window );
@@ -184,14 +133,15 @@ void Game::run(){
         scene_manager = new SceneManager(renderer);
         MainTitleScene main_title_scene(renderer);
         while(GameManager::instance()->get_game_is_running()){
-            updateGame();
+            scene_manager->update();
             SDL_RenderClear(renderer);
             //DRAW
                 if(GameManager::instance()->get_game_state() == RUNNING || GameManager::instance()->get_game_state() == PAUSED){
                     scene_manager->draw();
                     //drawGame();
                 }
-                if(GameManager::instance()->get_game_state() == MAIN_SCREEN)main_title_scene.draw();
+                if(GameManager::instance()->get_game_state() == MAIN_SCREEN)main_title_scene.draw_bg();
+                SDL_RenderPresent(renderer);
                 SDL_Delay(GameManager::instance()->get_ms_per_frame()*10);
                 GameManager::instance()->update_animation_frame();
         }

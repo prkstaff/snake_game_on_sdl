@@ -4,7 +4,7 @@
 #include "Command.h"
 #include "GameManager.h"
 
-Command* InputHandler::handle_input(SDL_Event sdl_event){
+Command* InputHandler::handle_input(){
             while(SDL_PollEvent( &sdl_event ) != 0){
                 if( sdl_event.type == SDL_QUIT ){
                     GameManager::instance()->set_game_is_running(false);

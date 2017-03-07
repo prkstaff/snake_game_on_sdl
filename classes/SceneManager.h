@@ -10,6 +10,7 @@ class SceneManager{
         SDL_Renderer* renderer;
     public:
         SceneManager(SDL_Renderer*);
+        void update();
         void draw();
         Scene* level_one;
         ~SceneManager();

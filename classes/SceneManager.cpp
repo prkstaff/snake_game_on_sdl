@@ -6,11 +6,16 @@ SceneManager::SceneManager(SDL_Renderer* therenderer){
     scenes.push_back(level_one);
 }
 void SceneManager::draw(){
-    scenes[0]->draw();
+    scenes[0]->draw_bg();
+    scenes[0]->draw_objects();
+    scenes[0]->draw_snake();
+}
+void SceneManager::update(){
+    scenes[0]->update();
 }
 SceneManager::~SceneManager(){
- //   for (unsigned int i; i < scenes.size(); ++i){
- //     delete (scenes[i]);
- //   };
- //   scenes.clear();
+    for (unsigned int i; i < scenes.size(); ++i){
+      delete(scenes[i]);
+    };
+    scenes.clear();
 }
