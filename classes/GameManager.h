@@ -4,6 +4,25 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <SDL2/SDL.h>
+enum Directions{
+    UP=0,
+    RIGHT,
+    DOWN,
+    LEFT,
+    DEFAULT,
+};
+enum SnakeSprites{
+    SNAKE_HEAD,
+    SNAKE_BODY,
+    SNAKE_BODY_TURN,
+    SNAKE_TAIL,
+    APPLE
+};
+enum GameStates{
+    MAIN_SCREEN = 0,
+    PAUSED,
+    RUNNING
+};
 class GameManager{
     private:
         static GameManager* manager_;

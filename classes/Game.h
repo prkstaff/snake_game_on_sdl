@@ -15,25 +15,6 @@
 
 //26m https://www.youtube.com/watch?v=nK_sT12h22s&list=PLt1n3PgXIOdmpmI_0PTOad7W0MlyAbHod&index=2
 //
-enum Directions{
-    UP=0,
-    RIGHT,
-    DOWN,
-    LEFT,
-    DEFAULT,
-};
-enum SnakeSprites{
-    SNAKE_HEAD,
-    SNAKE_BODY,
-    SNAKE_BODY_TURN,
-    SNAKE_TAIL,
-    APPLE
-};
-enum GameStates{
-    MAIN_SCREEN = 0,
-    PAUSED,
-    RUNNING
-};
 class Game
 {
     private:
@@ -49,7 +30,6 @@ class Game
         bool initSDLScreen();
         void processInput();
         void draw_main_screen();
-        void drawGame();
         void closeGame();
     public:
         Game();

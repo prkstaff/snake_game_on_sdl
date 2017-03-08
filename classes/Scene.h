@@ -17,17 +17,6 @@ class Scene{
         virtual void update() = 0;
         virtual ~Scene();
 };
-class MainTitleScene: public Scene{
-    private:
-        SDL_Texture* main_title_bg_texture = 0;
-    public:
-        virtual void draw_bg();
-        virtual void draw_objects();
-        virtual void draw_snake();
-        virtual void update();
-        MainTitleScene(SDL_Renderer*);
-        ~MainTitleScene();
-};
 class Level1Scene: public Scene{
     private:
         SDL_Texture* grass_texture;
