@@ -192,7 +192,7 @@ void Snake::move_if_empty(Position* apple_position){
         do{
             new_x = rand() % (GameManager::instance()->get_SCREEN_WIDTH() - GameManager::instance()->get_SCORE_BOARD_WIDTH()) ;
             new_y = rand() % GameManager::instance()->get_SCREEN_HEIGHT();
-        }while(is_snake_position(new_x,new_y));
+        }while(is_snake_position(new_x,new_y) || (new_x == apple_position->get_x() && new_y == apple_position->get_y() ));
         ate_apple = true;
         GameManager::instance()->set_apples_ate(GameManager::instance()->get_apples_ate() +1);
         //play chomp sound

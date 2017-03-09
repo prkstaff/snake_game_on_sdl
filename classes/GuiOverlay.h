@@ -2,6 +2,7 @@
 #define __GAMEOVERLAY_
 #include <SDL2/SDL.h>
 #include "GameManager.h"
+#include "TextDraw.h"
 
 //Handles Screen Scores, Pauses, things that overlay all game Lelels
 class GuiOverlay{
@@ -10,6 +11,7 @@ class GuiOverlay{
         SDL_Texture* main_title_bg_texture = 0;
         //General
         SDL_Renderer* renderer;
+        TextDraw* textmanager;
     public:
         void draw_main_title();
         void draw_won_overlay();

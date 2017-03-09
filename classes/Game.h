@@ -18,6 +18,7 @@
 class Game
 {
     private:
+		SDL_Joystick *joy;
         SDL_Surface *surface;
         Scene* level_one = 0;
         SDL_Texture *sprite;

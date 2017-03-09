@@ -14,7 +14,7 @@ Command* InputHandler::handle_input(){
                                 return go_up;
                                 //*direction = UP;
                             break;
-                            case SDLK_DOWN:
+                                           case SDLK_DOWN:
                                 return go_down;
                                 //*direction = DOWN;
                             break;
@@ -33,6 +33,24 @@ Command* InputHandler::handle_input(){
                                 GameManager::instance()->set_game_state(RUNNING);
                             break;
                         }
+                }else if(sdl_event.type == SDL_CONTROLLERBUTTONDOWN){
+                    //https://forums.libsdl.org/viewtopic.php?p=47268&sid=5e3d5a828c7b937e9d9fd9218add3f4b
+                    switch(sdl_event.cbutton.button)
+                    {
+                         case SDL_CONTROLLER_BUTTON_Y:
+                             return go_up;
+                         break;
+                         case SDL_CONTROLLER_BUTTON_X:
+                            return go_left;
+                         break;
+                         case SDL_CONTROLLER_BUTTON_B:
+                             return go_right;
+                         break;
+                         case SDL_CONTROLLER_BUTTON_A:
+                             return go_down;
+                         break;
+                    }
+
                 }
             }
             return NULL;

@@ -26,13 +26,35 @@ bool Game::initSDLScreen(){
         exit(2);
     }
     //Initialize SDL
-	if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0 )
+	if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0 )
 	{
 		printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
 		success = false;
 	}
 	else
 	{
+        // Check for joystick
+	if (SDL_NumJoysticks() > 0) {
+		// Open joystick
+		joy = SDL_JoystickOpen(0);
+
+		if (joy) {
+				printf("Opened Joystick 0\n");
+				printf("Name: %s\n", SDL_JoystickNameForIndex(0));
+				printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
+				printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
+				printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
+			} else {
+				printf("Couldn't open Joystick 0\n");
+			}
+
+			// Close if opened
+			if (SDL_JoystickGetAttached(joy)) {
+				SDL_JoystickClose(joy);
+			}
+		}else{
+			printf("NO JOYSTICK CONNECTED");
+		}
         SDL_CreateWindowAndRenderer( GameManager::instance()->get_SCREEN_WIDTH()*snake_sprite_square_size, GameManager::instance()->get_SCREEN_HEIGHT()*snake_sprite_square_size, SDL_WINDOW_RESIZABLE, &window, &renderer);
                          //Initialize SDL_mixer
         if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
@@ -75,7 +97,7 @@ void Game::run(){
                 gui_overlay.draw();
 
                 SDL_RenderPresent(renderer);
-                SDL_Delay(GameManager::instance()->get_ms_per_frame()*10);
+                SDL_Delay(GameManager::instance()->get_ms_per_frame());
                 GameManager::instance()->update_animation_frame();
         }
     }

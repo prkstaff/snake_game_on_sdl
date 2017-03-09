@@ -48,7 +48,11 @@ void Level1Scene::update(){
         command->execute(snake);
     }
     if(GameManager::instance()->get_game_state() == RUNNING){
-        snake->move_if_empty(apple_position);
+        int frame  = GameManager::instance()->get_animation_frame();
+        if(frame % 10 == 0){
+            //move every 10 frames
+            snake->move_if_empty(apple_position);
+        }
     }
 }
 void Level1Scene::draw_objects(){
